@@ -1,4 +1,4 @@
-# Mesh Networks Website
+# Website Files
 This folder will contain all website based stuff
 
 ## Accessing

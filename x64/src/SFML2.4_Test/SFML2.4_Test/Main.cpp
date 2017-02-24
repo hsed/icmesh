@@ -2,23 +2,53 @@
 #include <iostream>
 #include "entity.h"
 #include "car.h"
+#include "carList.h"
+#include "constants.h"
 
 using namespace std;
 using namespace sf;
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML works!");
-	sf::CircleShape shape(20.f);
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ITCS Simulation v0.01");
+	CarList carList; //instatiate a list of type Car.
 	bool isStarted = false;
 
-	Entity* ball1 = new Entity(sf::Color::Blue, 20.f, 30Ui64, Vector2f(0 + 20.f, window.getSize().y / 2), true);
-	Entity* ball2 = new Entity(sf::Color::Green, 20.f, 30Ui64, Vector2f(window.getSize().x / 2, window.getSize().y / 2), true);
-	ball1->setVelocity(Vector2f(1, 0));
-	ball2->setVelocity(Vector2f(0.5, 0));
+#pragma region Tracks
+	//Entity trackVert(sf::Color::White, 50.f, 4Ui64, Vector2f(window.getSize().x / 2, 0 + CAR_SIZE));
+	sf::RectangleShape trackVert(Vector2f(TRACK_WIDTH, window.getSize().y));
+	trackVert.setPosition(Vector2f((window.getSize().x - trackVert.getSize().x) / 2,0));
 
-	Car* car = new Car();
-	car->setVelocity(Vector2f(0.6, 0));
+	sf::RectangleShape trackHorz(Vector2f(window.getSize().x, TRACK_WIDTH));
+	trackHorz.setPosition(Vector2f(0,(window.getSize().y - trackHorz.getSize().y) / 2));
+
+#pragma endregion
+
+
+#pragma region InitCars
+
+	//This stuff can be moved to CarList class.
+	//on every creation a unique id must be assign by carlist, this is done by carList.addItem
+	//carlist will get size of current list, then add one.? or start from 0 as id
+	//if id =-1 it tells that id has not yet been set
+	//can use id to stop a particular car or change command of particular car.
+
+	Car* tempCar = new Car(); //Default constructor, creates a centered origin 20.f(default) red circle at top left corner
+	tempCar->setPosition(window.getSize().x / 2, 0 + CAR_SIZE);
+	tempCar->setVelocity(Vector2f(0, 0.4));
+	carList.addItem(*tempCar);
+	delete tempCar;
+
+	tempCar = new Car(sf::Color::Blue, CAR_SIZE, 30Ui64, Vector2f(0 + CAR_SIZE, window.getSize().y / 2)); //custom car
+	tempCar->setVelocity(Vector2f(1, 0));
+	carList.addItem(*tempCar);
+	delete tempCar;
+
+	tempCar = new Car(sf::Color::Green, CAR_SIZE, 30Ui64, Vector2f(window.getSize().x / 2, window.getSize().y / 2)); //custom car
+	tempCar->setVelocity(Vector2f(0.5, 0));
+	carList.addItem(*tempCar);
+	delete tempCar;
+#pragma endregion
 
 	while (window.isOpen())
 	{
@@ -34,34 +64,34 @@ int main()
 					//cout << "ASCII character typed: " << c << endl;
 					switch (c) {
 					case 's':
-						cout << "Starting simulation..." << endl;
-						isStarted = true;
+						cout << (!carList.getAnimStat() ? "Starting" : "Stopping") << " simulation..." << endl;
+						carList.setAnimStat(!carList.getAnimStat());
+						
 						break;
+					case 'p':
+						cout << "Processing commands..." << endl;
+						carList.processCommands();
+						break;
+					case '0':
+						cout << "Setting STOP command to ID 0..." << endl;
+						cout << "Command was " << (carList.setCommand(0, Car::CommandType::Stop) ? "set." : "not set.") << endl;
+						break;
+						
 					}
 				}
 
 			}
 		}
-		
-		if (ball1->checkCollision(ball2)) {
-			cout << "Collision!!!" << endl;
-		}
 
-		if (isStarted) {
-			//shape.move(0.5, 0); //Move shape by one unit diagonally
-			ball1->update();
-			ball2->update();
-			car->update();
-		}
-
+#pragma region Draw
 		window.clear();
-		window.draw(*ball1);
-		window.draw(*ball2);
-		window.draw(*car);
-
-
+		window.draw(trackVert);
+		window.draw(trackHorz);
+		carList.drawList(window);
 		window.display();
-		sleep(seconds(0.01f)); //XXfps, this is only approx
+#pragma endregion
+
+		sleep(seconds(PERIOD_S)); //XXfps, this is only approx
 	}
 
 	return 0;

@@ -1,0 +1,12 @@
+﻿  constants.h
+  Main.cpp
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\carlist.h(51): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(19): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(22): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(37): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(38): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(42): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(47): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+  Generating Code...
+  SFML2.4_Test.vcxproj -> C:\Users\Haaris\Documents\Visual Studio 2017\Projects\SFML2.4_Test\x64\Debug\SFML2.4_Test.exe
+  SFML2.4_Test.vcxproj -> C:\Users\Haaris\Documents\Visual Studio 2017\Projects\SFML2.4_Test\x64\Debug\SFML2.4_Test.pdb (Partial PDB)

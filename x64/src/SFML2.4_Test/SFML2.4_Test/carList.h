@@ -14,12 +14,14 @@ public:
 
 	}
 
-	void addItem(Car& el) {
-		el.setID(carIndex++); //This must be called first cause object is passed by val NOT REF on LinkedList::addItem
-		LinkedList::addItem(el); //call default command, you dont need virtual for some reason??? (i dont really understand them well)
-		//Set the car index to current value and increment it for next addition.
-							  //need plus to convert primitive datatype to numeric value, colour.r/g/b is unit8 which is internally a ASCII char
-		cout << "Created car with index: " << el.getID() << " and colour : (" << +el.getColor().r << ", " << +el.getColor().g << ", " << +el.getColor().b << ")" << endl;
+	void addItem(sf::Color color = sf::Color::Red, sf::Vector2f position = sf::Vector2f(0, 0), sf::Vector2f velocity = sf::Vector2f(0, 0)) {
+		Car* tempCar = new Car(color); //custom car
+		tempCar->setPosition(position);
+		tempCar->setVelocity(velocity);
+		tempCar->setID(carIndex++); //This must be called first cause object is passed by val NOT REF on LinkedList::addItem
+		LinkedList::addItem(*tempCar); //call default command, you dont need virtual for some reason??? (i dont really understand them well)
+		cout << "Created car with index: " << tempCar->getID() << " and colour : (" << +tempCar->getColor().r << ", " << +tempCar->getColor().g << ", " << +tempCar->getColor().b << ")" << endl;
+		delete tempCar; //free up memory!
 	}
 
 	bool getAnimStat() {
@@ -39,28 +41,21 @@ public:
 	}
 
 	void processCommands() {
-		vector<Car::CommandType> cmds; //vector of cmds
+		vector<Car::CommandType> cmds; //vector list of commands
+		//gather the commands from all cars in a vector, same as mesh network -> TX
 		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
 			cmds.push_back(tempPtr->val.getCommand());
 		}
-		int cmdScore = 1;
-		for (int i = 0; i < cmds.size(); i++) {
-			cout << "The car with ID " << i << " has command: " << cmds[i] << endl;
-			cmdScore *= cmds[i];
-		}
-		int maxScore = pow((int)Car::CommandType::Ready, cmds.size());
-		double cmdProb = cmdScore / maxScore;
-		cout << "The probablity of stopping is: " << (1-cmdProb) << endl;
-		if (cmdProb == 0) {
-			cout << "DECISION: STOP!!" << endl;
-			for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
-				tempPtr->val.recieveCommand(Car::CommandType::Stop);//send stop to every car
-			}
+
+		//push all gathered commands to evry car, same as mesh network -> RX
+		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
+			tempPtr->val.recieveCommands(cmds);
 		}
 		
 	}
 
 	bool setCommand(int ID, Car::CommandType cmd) {
+		//Set a command for a particular car given by ID
 		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
 			if (tempPtr->val.getID() == ID) {
 				tempPtr->val.setCommand(cmd);
@@ -68,6 +63,20 @@ public:
 			}
 		}
 		return false;
+	}
+
+	void checkPositions(sf::RenderWindow& windowHandle) {
+		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
+			if (tempPtr->val.getGlobalBounds().left > windowHandle.getSize().x) {
+				//reset position
+				tempPtr->val.setPosition(0 - CAR_SIZE, tempPtr->val.getPosition().y);
+			}
+			else if (tempPtr->val.getGlobalBounds().top > windowHandle.getSize().y) {
+				//reset position (else, since no diagonal movement)
+				tempPtr->val.setPosition(tempPtr->val.getPosition().x, 0 - CAR_SIZE);
+			}
+		}
+
 	}
 
 	static string cmdString(Car::CommandType cmd) {

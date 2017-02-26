@@ -8,8 +8,8 @@ public:
 	Entity() {
 		//if its a default construct do nothing so nothing shows up, neccessary for Car object
 	}
-	Entity(sf::Color colour, float radius, size_t sides = 30Ui64, sf::Vector2f position = sf::Vector2f(0, 0), bool centeredOrigin = true) {
-		this->setFillColor(colour);
+	Entity(sf::Color color, float radius, size_t sides = 30Ui64, sf::Vector2f position = sf::Vector2f(0, 0), bool centeredOrigin = true) {
+		this->setFillColor(color);
 		this->setRadius(radius);
 		this->setPointCount(sides);
 		if (centeredOrigin) { this->setOrigin(this->getRadius(), this->getRadius()); } //adjust origin before setting position

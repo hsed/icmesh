@@ -18,35 +18,51 @@ public:
 		this->setPosition(position);
 
 		command = CommandType::Ready;
-		currentState = CommandType::Ready;
-		intention = IntentionType::FollowingRoad;
-		uniqueID = -1;
+		currentCommand = CommandType::Ready;
+
+		currentState = {-1, Lane::Undefined, Lane::Undefined, -1, -1}; //need to implement speed and position from intersection
 
 	}
 
 
+	enum Lane {
+		Undefined = -1, //For initialisation
+		LaneNO = 0, //North Outward
+		LaneNI = 1, //North Inward
+		LaneEO = 2, //East Outward
+		LaneEI = 3,
+		LaneSO = 4,
+		LaneSI = 5,
+		LaneWO = 6,
+		LaneWI = 7
+	};
+
+	struct DataPacket {
+		int carID;
+		Lane laneID;
+		Lane intendedLaneID;
+		float speed; //direction is implied by other properties so this is Speed in X or Y
+		float relDist; //relative distance from intersection (assume google maps)
+	};
+
+	void update() {
+		Entity::update(); //important
+		
+	}
+	void setVelocity(sf::Vector2f velocity) {
+		Entity::setVelocity(velocity); //important
+		this->currentState.speed = ((velocity.x == 0) ? velocity.y: velocity.x); //spped has no direction so need to set x or y or either if both zero
+	}
+
+#pragma region Commands
 	enum CommandType {
 		Stop,	//Hazard
 		Slow,	//Caution
 		Ready
 	};
-
-	enum IntentionType {
-		TurningLeft,
-		TurningRight,
-		FollowingRoad,
-		SlowingDown,
-		Stopping,
-	};
-
 	CommandType getCommand() { return command; }
 	CommandType setCommand(CommandType command) { return this->command = command; }
-
-	Color getColor() { return this->getFillColor(); }
-
-	void setID(int ID) { uniqueID = ID; }
-	int getID() { return uniqueID; }
-
+	//Keep this function for now
 	void recieveCommands(std::vector<Car::CommandType> cmds) {
 		//cannt use std as namespace atm, using sf?
 		int cmdScore = 1; //default score
@@ -58,46 +74,57 @@ public:
 		double maxScore = pow((int)Car::CommandType::Ready, cmds.size()); //if all cars are fine the score == max_score == Ready^(car.size)
 		double cmdProb = cmdScore / maxScore;
 		//std::cout << "The probablity of stopping is: " << (1 - cmdProb) << std::endl;
-		if (cmdProb == 0 && this->currentState != CommandType::Stop) {
-			std::cout << "ID: " << this->uniqueID << "\tDECISION: STOP!!" << "\t(Probability: " << cmdProb << ")" << std::endl;
+		if (cmdProb == 0 && this->currentCommand != CommandType::Stop) {
+			std::cout << "ID: " << this->getID() << "\tDECISION: STOP!!" << "\t(Probability: " << cmdProb << ")" << std::endl;
 			this->stop();
 		}
-		else if (cmdProb == 1 && this->currentState != CommandType::Ready) {
-			std::cout << "ID: " << this->uniqueID << "\tDECISION: Continue" << "\t(Probability: " << cmdProb << ")" << std::endl;
+		else if (cmdProb == 1 && this->currentCommand != CommandType::Ready) {
+			std::cout << "ID: " << this->getID() << "\tDECISION: Continue" << "\t(Probability: " << cmdProb << ")" << std::endl;
 			this->restart(); //if slow or stopped travel at random speed.
 		}
-		else if (cmdProb > 0 && cmdProb < 1 && this->currentState != CommandType::Slow) {
+		else if (cmdProb > 0 && cmdProb < 1 && this->currentCommand != CommandType::Slow) {
 			//For ready state 0 < cmdProb < 1
 			//but this can be adjusted to allow for more iterim states
-			std::cout << "ID: " << this->uniqueID << "\tDECISION: SLOW" << "\t(Probability: " << cmdProb << ")" << std::endl;
+			std::cout << "ID: " << this->getID() << "\tDECISION: SLOW" << "\t(Probability: " << cmdProb << ")" << std::endl;
 			this->slow(); //if slow or stopped travel at random speed.
 		}
 		else {
 			//continue in the current state
 		}
 	}
+#pragma endregion
 
+	Color getColor() { return this->getFillColor(); }
+
+	void setID(int ID) { currentState.carID = ID; }
+	int getID() { return currentState.carID; }
+
+	DataPacket getPacket() { return this->currentState; }
+	
 
 private:
-	CommandType command;
-	CommandType currentState;
-	int uniqueID; //-1 by default? some unique number always?
-	IntentionType intention;
+	DataPacket currentState;
+
+	CommandType command;		//old
+	CommandType currentCommand; //old
+
+	
+	//For commands only atm
 	void stop() {
 		this->velocity = Vector2f(0, 0);
-		this->currentState = CommandType::Stop;
+		this->currentCommand = CommandType::Stop;
 	}
 	void slow() {
-		if (this->currentState == CommandType::Stop) {
+		if (this->currentCommand == CommandType::Stop) {
 			this->velocity = SLOW_MULT * this->initVelocity;
 		}
-		else if (this->currentState == CommandType::Ready) {
+		else if (this->currentCommand == CommandType::Ready) {
 			this->velocity = SLOW_MULT * this->velocity;
 		}
-		this->currentState = CommandType::Slow;
+		this->currentCommand = CommandType::Slow;
 	}
 	void restart() {
 		this->velocity = this->initVelocity;
-		this->currentState = CommandType::Ready;
+		this->currentCommand = CommandType::Ready;
 	}
 };

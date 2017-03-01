@@ -23,12 +23,12 @@ public:
 		//get active/latest command here i.e. pause stop etc.
 		this->move(this->velocity);
 	}
-	bool checkCollision(Entity* entity) {
-		return this->getGlobalBounds().intersects(entity->getGlobalBounds());
-	}
-	void setVelocity(sf::Vector2f velocity) {
+	virtual void setVelocity(sf::Vector2f velocity) {
 		this->initVelocity = velocity; //for restart purposes
 		this->velocity = velocity;
+	}
+	bool checkCollision(Entity* entity) {
+		return this->getGlobalBounds().intersects(entity->getGlobalBounds());
 	}
 protected:
 	sf::Vector2f initVelocity;

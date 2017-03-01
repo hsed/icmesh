@@ -40,7 +40,12 @@ public:
 
 	}
 
+	//MAIN PROCESSING MODULE
 	void processCommands() {
+		vector<Car::DataPacket> packets; //A vector containing the DataPacket from every car (this gives current status)
+
+		//leave this for now
+		#pragma region Commands
 		vector<Car::CommandType> cmds; //vector list of commands
 		//gather the commands from all cars in a vector, same as mesh network -> TX
 		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
@@ -51,7 +56,12 @@ public:
 		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
 			tempPtr->val.recieveCommands(cmds);
 		}
-		
+		#pragma endregion
+
+		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
+			packets.push_back(tempPtr->val.getPacket);
+		}
+		//TODO: Do Stuff here @sdpenquin @mohika
 	}
 
 	bool setCommand(int ID, Car::CommandType cmd) {

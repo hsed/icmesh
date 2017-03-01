@@ -22,7 +22,7 @@ To modify the webpage design, add components, etc, do the following:
 
 ### Folder Structure
 - Concepts: All External Templates
-- Experimental: If you like to make a slightly different build.
+- Experimental: If you like to make a slightly different build (contains beta website 2017-03-01).
 - Live: The website that is shown when you browse the URL.
 
 

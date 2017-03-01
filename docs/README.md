@@ -1,14 +1,14 @@
 # Website Files
 This folder will contain all website based stuff
 
-## Index File
+### Index File
 **_Do NOT_** delete the file 'index.html' in the docs folder, this is used for redirection.
 
-## Accessing
+### Accessing
 To access the website online, use the following URL:
 https://hsed.github.io/icmesh/
 
-## Modifying
+### Modifying
 To modify the webpage design, add components, etc, do the following:
 
 1. Install Node.JS
@@ -20,13 +20,13 @@ To modify the webpage design, add components, etc, do the following:
 7. Goto Debug > Start Debugging ("Attach to Chrome (flagged shortcut)").
 8. Click restart in VS Code when making changes to refresh.
 
-## Folder Structure
+### Folder Structure
 - Concepts: All External Templates
 - Experimental: If you like to make a slightly different build.
 - Live: The website that is shown when you browse the URL.
+
+
 ---
-
-
 ## Website Details
 ###Inspirations 
 - Odyssey: https://w3layouts.com/preview/?l=/odyssey-travel-category-bootstrap-responsive-web-template 

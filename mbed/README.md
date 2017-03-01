@@ -24,9 +24,11 @@ Use default tutorials, but make sure to install the [mbedWinSerial](https://deve
 ###Sensors
 Currently there is a 'ForOnlineImport' zip file in the etc folder which you can import, make changes to and compile for LPC11U24. Cross-compiler fails due to error in the make script exported from ARM's website.
 
-A library has so far been tested that works at 115200 baud rate. The library outputs:  
+A library has so far been tested that works at 115200 baud rate. The library outputs:  
 - *Acceleration* in terms of *ɡ* [=9.81 m/s2] 
 - *Magnetic flux density* in terms of *G* [=100 μT].
+
+Data is stored in two 8-bit registers as a signed 16-bit 2's complement value. Thus the maximum value for acceleration is +2^15-1 and the minimum value is -2^15= -32786. This can be extracted by 8 leftbitshifts of High Register ORed with Low Register. This value is then converted to a short data type. 
 
 There exists another [library](https://developer.mbed.org/users/shimniok/code/LSM303DLH/) that may be combined with the current [library](https://developer.mbed.org/users/bclaus/code/LSM303DLHC/docs/tip/LSM303DLHC_8cpp_source.html) to give heading in degrees.
 

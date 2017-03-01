@@ -1,6 +1,9 @@
 # Website Files
 This folder will contain all website based stuff
 
+## Index File
+**_Do NOT_** delete the file 'index.html' in the docs folder, this is used for redirection.
+
 ## Accessing
 To access the website online, use the following URL:
 https://hsed.github.io/icmesh/
@@ -16,3 +19,32 @@ To modify the webpage design, add components, etc, do the following:
 6. Open folder "icmesh\docs\" in VS Code.
 7. Goto Debug > Start Debugging ("Attach to Chrome (flagged shortcut)").
 8. Click restart in VS Code when making changes to refresh.
+
+## Folder Structure
+- Concepts: All External Templates
+- Experimental: If you like to make a slightly different build.
+- Live: The website that is shown when you browse the URL.
+---
+
+
+## Website Details
+###Inspirations 
+- Odyssey: https://w3layouts.com/preview/?l=/odyssey-travel-category-bootstrap-responsive-web-template 
+- Concept: http://gettemplates.co/preview/?item=concept-free-website-template-using-bootstrap-framework-multi-purpose 
+- Dimension: https://html5up.net/dimension 
+ 
+###Base Template 
+Concept 
+
+###Few key ideas 
+####Single page scrollable sections 
+Odyssey 
+
+####Gallery 
+Odyssey 
+
+####Heading/Intro 
+Dimension 
+
+####Menu animation at start (optional) from 
+Odyssey

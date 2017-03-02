@@ -5,19 +5,21 @@ Use default tutorials, but make sure to install the [mbedWinSerial](https://deve
 
 
 ###Installation of Mbed toolChain
+1. Install Python v2.7 (v3 is incompatible), [Git v1.9+](https://git-scm.com/) & [Mercurial v2.2+](https://www.mercurial-scm.org/).
+
 1. Install mbed-cli with `sudo pip install mbed-cli`. Note that it takes a while.
 
 1. Download the blinky example program. `mbed import mbed-os-example-blinky`
 
-1. Navigate into the new folder `cd mbed-os-example-blinky`
+1. Navigate into the newly created folder `cd mbed-os-example-blinky`
 
-1. Download the tools from https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads. Broken links for the latest links
+1. Download the GNU compiler toolchain from https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads. ~~Broken links for the latest links.~~
 
-1. Extract the files tar -xvjf. Add the extracted files to the path.
+1. Extract the files using `tar -xvjf gcc-arm-none-eabi-6-2017-q1-update-linux.tar.bz2`. ~~Add the extracted files to the path.~~
 
-1. Navigate to /mbed-os-exapmle-blinky/mbed-os/tools/settings.py and set the GCC_ARM_PATH to the path of your tools.
+1. Navigate to /mbed-os-exapmle-blinky/mbed-os/tools/settings.py and set the **GCC_ARM_PATH** to the path of your tools. This should be the bin folder, for example: "/<ROOT>/<SOME_PATH>/gcc-arm-none-eabi-6-2017-q1-update/bin".
 
-1. Enter `mbed compile` and it will compile. Copy the bin to the mbed directory and enjoy!
+1. Enter `mbed compile -t GCC_ARM -m lpc11u24` and it will compile. Copy the bin to the mbed directory and enjoy!
 
 
 ##Current Progress

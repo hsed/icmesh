@@ -15,9 +15,9 @@ Use default tutorials, but make sure to install the [mbedWinSerial](https://deve
 
 1. Download the GNU compiler toolchain from https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads. ~~Broken links for the latest links.~~
 
-1. Extract the files using `tar -xvjf gcc-arm-none-eabi-6-2017-q1-update-linux.tar.bz2`. ~~Add the extracted files to the path.~~
+1. Extract the files using `tar -xvjf gcc-arm-none-eabi-6-2017-q1-update-linux.tar.bz2`. ~~Add the extracted files to the path (not needed).~~
 
-1. Navigate to /mbed-os-exapmle-blinky/mbed-os/tools/settings.py and set the **GCC_ARM_PATH** to the path of your tools. This should be the bin folder, for example: "/<ROOT>/<SOME_PATH>/gcc-arm-none-eabi-6-2017-q1-update/bin".
+1. Navigate to /mbed-os-exapmle-blinky/mbed-os/tools/settings.py and set the **GCC_ARM_PATH** to the path of your tools. This should be the bin folder, for example: `/home/user/gcc-arm-none-eabi-6-2017-q1-update/bin`.
 
 1. Enter `mbed compile -t GCC_ARM -m lpc11u24` and it will compile. Copy the bin to the mbed directory and enjoy!
 

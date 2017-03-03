@@ -4,7 +4,7 @@
 Use default tutorials, but make sure to install the [mbedWinSerial](https://developer.mbed.org/handbook/Windows-serial-configuration) driver if you are on Windows (Windows 10 included!).
 
 
-###Installation of Mbed toolChain
+###Installation of Mbed toolChain (deprecated due to library linker errors)
 1. Install Python v2.7 (v3 is incompatible), [Git v1.9+](https://git-scm.com/) & [Mercurial v2.2+](https://www.mercurial-scm.org/).
 
 1. Install mbed-cli with `sudo pip install mbed-cli`. Note that it takes a while.
@@ -20,6 +20,14 @@ Use default tutorials, but make sure to install the [mbedWinSerial](https://deve
 1. Navigate to /mbed-os-exapmle-blinky/mbed-os/tools/settings.py and set the **GCC_ARM_PATH** to the path of your tools. This should be the bin folder, for example: `/home/user/gcc-arm-none-eabi-6-2017-q1-update/bin`.
 
 1. Enter `mbed compile -t GCC_ARM -m lpc11u24` and it will compile. Copy the bin to the mbed directory and enjoy!
+
+
+### Keil uVision (Offline compilation, Windows only)
+1. Download and install Kiel from http://az717401.vo.msecnd.net/eval/MDK-523.EXE. Note: This is a direct link, if it doesn't work, download _MDK-ARM_ from https://www.keil.com/download/product/.
+1. Download requires 720MB, installation will require more so be patient.
+1. After installing simply open `src/uvision/icmesh.uvprojx` and click "Project > Rebuild All Target Files".
+1. Final output in *.bin format should be placed inside the BUILD folder within the uvision folder.
+1. It's a lot faster and far stable than the online IDE!
 
 
 ##Current Progress
@@ -39,4 +47,4 @@ The current library has been updated @ line 83 to change the frequency to  `_LSM
 Need to study library and datasheet!
 
 ###Comms
-???
+Sample project created that works with 2 nodes using nRF. Need more testing for more nodes.

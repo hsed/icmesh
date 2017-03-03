@@ -59,7 +59,7 @@ public:
 		#pragma endregion
 
 		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
-			packets.push_back(tempPtr->val.getPacket);
+			packets.push_back(tempPtr->val.getPacket());
 		}
 		//TODO: Do Stuff here @sdpenquin @mohika
 	}
@@ -76,14 +76,23 @@ public:
 	}
 
 	void checkPositions(sf::RenderWindow& windowHandle) {
+		//imp! bounds are top-left corner origin but cars themselves are centered origin
 		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
 			if (tempPtr->val.getGlobalBounds().left > windowHandle.getSize().x) {
 				//reset position
 				tempPtr->val.setPosition(0 - CAR_SIZE, tempPtr->val.getPosition().y);
 			}
+			else if (tempPtr->val.getGlobalBounds().left < 0 - CAR_SIZE*2 ) {
+				//reset position
+				tempPtr->val.setPosition(windowHandle.getSize().x + CAR_SIZE, tempPtr->val.getPosition().y);
+			}
 			else if (tempPtr->val.getGlobalBounds().top > windowHandle.getSize().y) {
 				//reset position (else, since no diagonal movement)
 				tempPtr->val.setPosition(tempPtr->val.getPosition().x, 0 - CAR_SIZE);
+			}
+			else if (tempPtr->val.getGlobalBounds().top < 0 - CAR_SIZE * 2) {
+				//reset position
+				tempPtr->val.setPosition(tempPtr->val.getPosition().x, windowHandle.getSize().y + CAR_SIZE);
 			}
 		}
 

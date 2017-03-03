@@ -2,6 +2,7 @@
 
 #include "entity.h"
 #include "constants.h"
+#include "lane.h"
 #include <vector>
 
 using namespace sf;
@@ -25,22 +26,10 @@ public:
 	}
 
 
-	enum Lane {
-		Undefined = -1, //For initialisation
-		LaneNO = 0, //North Outward
-		LaneNI = 1, //North Inward
-		LaneEO = 2, //East Outward
-		LaneEI = 3,
-		LaneSO = 4,
-		LaneSI = 5,
-		LaneWO = 6,
-		LaneWI = 7
-	};
-
 	struct DataPacket {
 		int carID;
-		Lane laneID;
-		Lane intendedLaneID;
+		Lane::LaneType laneID;
+		Lane::LaneType intendedLaneID;
 		float speed; //direction is implied by other properties so this is Speed in X or Y
 		float relDist; //relative distance from intersection (assume google maps)
 	};

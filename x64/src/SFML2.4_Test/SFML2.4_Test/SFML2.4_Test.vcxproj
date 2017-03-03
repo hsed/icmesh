@@ -162,6 +162,7 @@
     <ClInclude Include="carList.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="linkedList.h" />
+    <ClInclude Include="lane.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

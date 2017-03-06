@@ -36,15 +36,15 @@ To modify the webpage design, add components, etc, do the following:
 ###Base Template 
 Concept 
 
-###Few key ideas 
-####Single page scrollable sections 
-Odyssey 
+###Progress
+####Key Design Parts
+- [x] Single page scrollable sections (Odyssey)
+- [ ] Gallery (Odyssey) 
+- [ ] Heading/Intro (Dimension)
+- [ ] Menu animation at start (optional) (Odyssey)
 
-####Gallery 
-Odyssey 
-
-####Heading/Intro 
-Dimension 
-
-####Menu animation at start (optional) from 
-Odyssey
+####Contents
+- [ ] Headings/Menu Items
+- [ ] Intro Section
+- [ ] Team Section
+- [ ] ADD MORE STUFF

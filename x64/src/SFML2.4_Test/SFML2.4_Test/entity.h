@@ -27,7 +27,8 @@ public:
 		this->initVelocity = velocity; //for restart purposes
 		this->velocity = velocity;
 	}
-	bool checkCollision(Entity* entity) {
+	virtual bool checkCollision(sf::Shape* entity) {
+		//needs to be as general as possible hence sf::Shape this ensures that rectangle shapes can also be tested
 		return this->getGlobalBounds().intersects(entity->getGlobalBounds());
 	}
 protected:

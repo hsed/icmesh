@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "lane.h"
 #include <vector>
+#include <algorithm>
 
 using namespace sf;
 
@@ -21,8 +22,18 @@ public:
 		command = CommandType::Ready;
 		currentCommand = CommandType::Ready;
 
-		currentState = {-1, Lane::Undefined, Lane::Undefined, -1, -1}; //need to implement speed and position from intersection
+		currentState = {-1, Lane::Undefined, Lane::Undefined, -1, getDistFromJunc(), -1, false}; //need to implement speed and position from intersection
 
+	}
+
+	//Overloaded func to also update dist when pos is set
+	void setPosition(float x, float y) {
+		sf::CircleShape::setPosition(x, y);
+		updateDistFromJunc();
+	}
+	void setPosition(Vector2f position) {
+		sf::CircleShape::setPosition(position);
+		updateDistFromJunc();
 	}
 
 
@@ -31,17 +42,35 @@ public:
 		Lane::LaneType laneID;
 		Lane::LaneType intendedLaneID;
 		float speed; //direction is implied by other properties so this is Speed in X or Y
-		float relDist; //relative distance from intersection (assume google maps)
+		float relDist; //relative distance from intersection == dist from centre of window (assume google maps)
+		float prevTime; //temp fix for issue with bouding boxes and intersection
+		bool atJunc; //is the car currently crossing the junction
 	};
 
 	void update() {
 		Entity::update(); //important
-		
+		updateDistFromJunc();
 	}
 	void setVelocity(sf::Vector2f velocity) {
 		Entity::setVelocity(velocity); //important
 		this->currentState.speed = ((velocity.x == 0) ? velocity.y: velocity.x); //spped has no direction so need to set x or y or either if both zero
 	}
+
+	bool checkCollision(sf::Shape* entity) {
+		bool isIntersect = Entity::checkCollision(entity);
+		if (isIntersect) {
+			currentState.atJunc = true;
+		}
+		else {
+			currentState.atJunc = false;
+		}
+		return isIntersect;
+	}
+
+	void updateDistFromJunc() {
+		this->currentState.relDist = getDistFromJunc();
+	}
+
 
 #pragma region Commands
 	enum CommandType {
@@ -50,7 +79,18 @@ public:
 		Ready
 	};
 	CommandType getCommand() { return command; }
-	CommandType setCommand(CommandType command) { return this->command = command; }
+	CommandType setCommand(CommandType command) { 
+		if (command == CommandType::Stop && this->currentCommand != CommandType::Stop) {
+			this->stop();
+		}
+		if (command == CommandType::Slow && this->currentCommand != CommandType::Slow) {
+			this->slow();
+		}
+		if (command == CommandType::Ready && this->currentCommand != CommandType::Ready) {
+			this->restart();
+		}
+		return this->command = command; 
+	}
 	//Keep this function for now
 	void recieveCommands(std::vector<Car::CommandType> cmds) {
 		//cannt use std as namespace atm, using sf?
@@ -63,6 +103,7 @@ public:
 		double maxScore = pow((int)Car::CommandType::Ready, cmds.size()); //if all cars are fine the score == max_score == Ready^(car.size)
 		double cmdProb = cmdScore / maxScore;
 		//std::cout << "The probablity of stopping is: " << (1 - cmdProb) << std::endl;
+		/*
 		if (cmdProb == 0 && this->currentCommand != CommandType::Stop) {
 			std::cout << "ID: " << this->getID() << "\tDECISION: STOP!!" << "\t(Probability: " << cmdProb << ")" << std::endl;
 			this->stop();
@@ -80,6 +121,7 @@ public:
 		else {
 			//continue in the current state
 		}
+		*/
 	}
 #pragma endregion
 
@@ -87,6 +129,15 @@ public:
 
 	void setID(int ID) { currentState.carID = ID; }
 	int getID() { return currentState.carID; }
+	void setLaneID(Lane::LaneType ID) { currentState.laneID = ID; }
+	void setIntLaneID(Lane::LaneType ID) { currentState.intendedLaneID = ID; }
+	void cross() {
+		this->currentState.laneID = this->currentState.intendedLaneID;
+	}
+	void setPrevTime(float time) {
+		this->currentState.prevTime = time;
+	}
+	//Get LaneID from datapacket
 
 	DataPacket getPacket() { return this->currentState; }
 	
@@ -97,7 +148,45 @@ private:
 	CommandType command;		//old
 	CommandType currentCommand; //old
 
-	
+	float getDistFromJunc() {
+		Vector2f juncTL(WINDOW_WIDTH / 2 - TRACK_WIDTH, WINDOW_HEIGHT / 2 - TRACK_WIDTH); // Top-Left Corner of junction
+		float x = this->getPosition().x;
+		float y = this->getPosition().y;
+
+		switch (this->currentState.laneID) {
+		case 0:
+			y += CAR_SIZE;
+			return juncTL.y - y;
+		case 1:
+			y += CAR_SIZE;
+			return juncTL.y - y;
+		case 2:
+			x -= CAR_SIZE;
+			return x - (juncTL.x + 2 * TRACK_WIDTH);
+		case 3:
+			x -= CAR_SIZE;
+			return x - (juncTL.x + 2 * TRACK_WIDTH);
+		case 4:
+			y -= CAR_SIZE;
+			return y - (juncTL.y + 2 * TRACK_WIDTH);
+		case 5:
+			y -= CAR_SIZE;
+			return y - (juncTL.y + 2 * TRACK_WIDTH);
+		case 6:
+			x += CAR_SIZE;
+			return juncTL.x - x;
+		case 7:
+			x += CAR_SIZE;
+			return juncTL.x - x;
+		}
+
+		////not a very good idea to do pythagoras maybe bounds is better
+		//float x = (WINDOW_WIDTH / 2) - ;
+		//float y = (WINDOW_HEIGHT / 2) - this->getPosition().y;
+		////std::cout << "x: " << x << " y: " << y << " sqrt: " << sqrt(pow(x, 2) + pow(y, 2)) << std::endl; //debugging only
+		//return sqrt(pow(x, 2) + pow(y, 2));
+	}
+
 	//For commands only atm
 	void stop() {
 		this->velocity = Vector2f(0, 0);

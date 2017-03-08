@@ -1,5 +1,6 @@
 .\build\main.o: main.cpp
 .\build\main.o: mbed_config.h
+.\build\main.o: nRF24L01P\nRF24L01P.h
 .\build\main.o: mbed/./mbed.h
 .\build\main.o: mbed/./platform/toolchain.h
 .\build\main.o: mbed/./platform/mbed_preprocessor.h
@@ -77,5 +78,4 @@
 .\build\main.o: mbed/./hal/sleep_api.h
 .\build\main.o: mbed/./platform/rtc_time.h
 .\build\main.o: mbed/./platform/FunctionPointer.h
-.\build\main.o: nRF24L01P\nRF24L01P.h
 .\build\main.o: LSM303DLHC\LSM303DLHC.h

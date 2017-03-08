@@ -1,5 +1,11 @@
-﻿  constants.h
-  Main.cpp
+﻿  Main.cpp
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(83): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(85): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(89): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(91): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+  constants.h
   Generating Code...
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\lane.h(46): warning C4715: 'Lane::laneString': not all control paths return a value
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\car.h(188): warning C4715: 'Car::getDistFromJunc': not all control paths return a value
   SFML2.4_Test.vcxproj -> C:\Users\Haaris\documents\visual studio 2017\Projects\SFML2.4_Test\x64\Debug\SFML2.4_Test.exe
   SFML2.4_Test.vcxproj -> C:\Users\Haaris\documents\visual studio 2017\Projects\SFML2.4_Test\x64\Debug\SFML2.4_Test.pdb (Partial PDB)

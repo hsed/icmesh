@@ -1,0 +1,9 @@
+﻿  constants.h
+  Main.cpp
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(82): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(84): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(88): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\haaris\documents\visual studio 2017\projects\sfml2.4_test\sfml2.4_test\main.cpp(90): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+  Generating Code...
+  SFML2.4_Test.vcxproj -> C:\Users\Haaris\documents\visual studio 2017\Projects\SFML2.4_Test\x64\Debug\SFML2.4_Test.exe
+  SFML2.4_Test.vcxproj -> C:\Users\Haaris\documents\visual studio 2017\Projects\SFML2.4_Test\x64\Debug\SFML2.4_Test.pdb (Partial PDB)

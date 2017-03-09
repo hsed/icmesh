@@ -38,7 +38,7 @@ int main()
 			{
 				if (event.text.unicode < 128) {
 					char c = static_cast<char>(event.text.unicode);
-					//cout << "ASCII character typed: " << c << endl;
+					cout << "ASCII character typed: " << c << endl;
 					switch (c) {
 					case 's':
 						cout << (!carList.getAnimStat() ? "\nStarting" : "\nStopping") << " simulation..." << endl;
@@ -46,7 +46,7 @@ int main()
 
 						break;
 					case 'p':
-						//cout << "\nThis feature is disabled as processing is continuous..." << endl;
+						cout << "\nThis feature is disabled as processing is continuous..." << endl;
 						carList.processCommands();
 						break;
 					case '0':

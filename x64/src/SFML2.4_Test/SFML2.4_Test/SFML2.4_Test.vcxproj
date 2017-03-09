@@ -22,7 +22,7 @@
     <ProjectGuid>{935CD340-63AE-4C7A-BDA9-8055084CA259}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SFML24_Test</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -74,8 +74,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files\SFML\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\SFML\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\Group Project SFML\SFML-2.4.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\Group Project SFML\SFML-2.4.2\lib;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

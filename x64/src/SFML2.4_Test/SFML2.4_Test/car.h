@@ -192,6 +192,7 @@ private:
 		this->velocity = Vector2f(0, 0);
 		this->currentCommand = CommandType::Stop;
 	}
+
 	void slow() {
 		if (this->currentCommand == CommandType::Stop) {
 			this->velocity = SLOW_MULT * this->initVelocity;
@@ -201,6 +202,7 @@ private:
 		}
 		this->currentCommand = CommandType::Slow;
 	}
+
 	void restart() {
 		this->velocity = this->initVelocity;
 		this->currentCommand = CommandType::Ready;

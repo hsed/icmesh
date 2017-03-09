@@ -23,6 +23,7 @@ public:
 		//default, needed for lane
 		this->laneID = Undefined;
 	}
+
 	Lane(LaneType ID, Vector2f size, Vector2f position, Color color = sf::Color::White) {
 		this->laneID = ID;
 		this->setSize(size);

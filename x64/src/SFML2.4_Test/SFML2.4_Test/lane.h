@@ -34,6 +34,11 @@ public:
 	LaneType getLaneID() { return laneID; }
 	//LaneID only set when constructing object.
 
+	struct LaneTime {
+		LaneType laneID;
+		float time;
+	};
+
 	static std::string laneString(Lane::LaneType ID) {
 		switch (ID) {
 		case 0: return "North-Out";

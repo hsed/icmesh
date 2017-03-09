@@ -35,7 +35,7 @@ Concept
 ####Contents
 - [x] Headings/Menu Items -> pls check/suggest improvements
 - [ ] Intro Section
-- [ ] Team Section
+- [x] Team Section
 - [ ] ADD MORE STUFF
 
 

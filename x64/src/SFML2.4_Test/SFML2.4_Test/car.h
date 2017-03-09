@@ -127,6 +127,103 @@ public:
 		}
 		*/
 	}
+
+	void recievePackets(vector<Car::DataPacket> allPackets) {
+		vector<vector<Car::DataPacket>> packetsPerLane;
+		vector<Car::DataPacket> tmpLanePackets;
+
+		for (int i = 0; i < LANES; i++) { packetsPerLane.push_back(tmpLanePackets); }
+		for (int i = 0; i < allPackets.size(); i++) {
+			if (allPackets[i].laneID >= 0 && allPackets[i].laneID < LANES) {
+				packetsPerLane[allPackets[i].laneID].push_back(allPackets[i]);
+			}
+			else {
+				cout << "ERROR: Cannot get packet from car with id " << allPackets[i].laneID << "as laneID is invalid." << endl;
+			}
+		}
+
+		
+
+		//Least time to cross => crosses first algorithm.
+
+
+		Lane::LaneTime temp;
+		//TimeID temp;
+		vector<Lane::LaneTime> leastTimesToEnter;
+
+
+
+		//ALL ODD LANES_IDs are INWARD LANES -- ONLY ODD LANES HERE
+		for (int i = 1; i < LANES; i += 2) {
+			if (!packetsPerLane[i].empty() && !packetsPerLane[i][0].atJunc) {
+				temp.laneID = packetsPerLane[i][0].laneID;	//assume topmost is nearest
+															//temp.timeToEnter = abs((packetsPerLane[i][0].relDist +(TRACK_WIDTH*2)) / packetsPerLane[i][0].speed) * PERIOD_S; //assume topmost is nearest
+				temp.time = abs((packetsPerLane[i][0].relDist) / packetsPerLane[i][0].speed) * PERIOD_S; //this version only calcs time to junc
+				leastTimesToEnter.push_back(temp); //only get nearest to junc per lane
+			}
+		}
+
+
+
+		if (!leastTimesToEnter.empty()) {
+			std::sort(leastTimesToEnter.begin(), leastTimesToEnter.end(), CarList::compTimeID);
+			for (int i = 0; i < leastTimesToEnter.size(); i++) {
+				cout << "Nearest car in lane: " << Lane::laneString(leastTimesToEnter[i].laneID) << " will take: " << leastTimesToEnter[i].time << "s to enter junction." << endl;
+			}
+		}
+
+		bool isAtJunc = false;
+		bool skipRest;
+		for (int i = 0; i < allPackets.size() && isAtJunc == false; i++) {
+			if (allPackets[i].atJunc) {
+				//inside to minus from junc width
+				float relDist = abs(allPackets[i].relDist);
+				float timeToCross = abs((((TRACK_WIDTH * 2) + CAR_SIZE * 2) - relDist) / allPackets[i].speed) * PERIOD_S;
+				cout << "Car in junction will take: " << timeToCross << "s to cross" << endl;
+				skipRest = false;
+				//if (timeToCross < allPackets[i].prevTime || allPackets[i].prevTime == -1) { //this has been fixed by adding virtual padding to junction
+				if (true) {
+					//only test if time is NOT increasing
+					cout << "still on prev: " << allPackets[i].prevTime << " now: " << timeToCross << endl;
+					//allPackets[i].prevTime = timeToCross;
+					//getCarByID(allPackets[i].carID)->setPrevTime(timeToCross);
+
+					for (int j = 0; j < leastTimesToEnter.size() && !skipRest; j++) {
+						if (leastTimesToEnter[j].time >(timeToCross + 0.5)) {
+							skipRest = true; //after the first value > timetocross all other must be > cause sorted, give +0.5sec buffer
+						}
+						else {
+							cout << "time maybe an issue" << endl;
+							//same or less to enter as it is to cross
+
+							Lane::LaneType self = allPackets[i].laneID;
+							Lane::LaneType nearby = packetsPerLane[leastTimesToEnter[j].laneID][0].laneID; //get nearest node in that lane, assume topmost
+							Lane::LaneType selfIntent = allPackets[i].intendedLaneID;
+							Lane::LaneType nearbyIntent = packetsPerLane[leastTimesToEnter[j].laneID][0].intendedLaneID; //get nearest node in that lane, assume topmost
+
+							cout << "my id: " << Lane::laneString(selfIntent) << " other id: " << Lane::laneString(nearbyIntent) << endl;
+
+							if (Lane::canCrash(self, nearby, selfIntent, nearbyIntent)) {
+								cout << "Crash is viabe slowing down all cars in lane: " << leastTimesToEnter[j].laneID << endl;
+								for (int k = 0; k < packetsPerLane[leastTimesToEnter[j].laneID].size(); k++) {
+									int ID = packetsPerLane[leastTimesToEnter[j].laneID][k].carID;
+									//Car* temp = getCarByID(ID);
+									//if (temp != NULL) {
+										//temp->setCommand(Car::Slow);
+									//}
+								}
+							}
+						}
+					}
+				}
+				//isAtJunc = true;
+			}
+		}
+
+		//Get every car with time to enter at junc < time to cross
+		//for each of these u need intended lane ids, if they math or special case 7-1, 3-5 then tel car to slow down
+
+	}
 #pragma endregion
 
 	Color getColor() { return this->getFillColor(); }

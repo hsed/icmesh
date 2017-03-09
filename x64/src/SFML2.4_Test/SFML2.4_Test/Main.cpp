@@ -14,7 +14,8 @@ void drawShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carLi
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), ABOUT);
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), ABOUT, sf::Style::None); //Main window
+	sf::RenderWindow window2(sf::VideoMode(400, 400), "Information Window"); //Info Window
 	//sf::RectangleShape trackVert;
 	//sf::RectangleShape trackHorz;
 	Lane junction; //not really a lane but have similar properties
@@ -30,26 +31,42 @@ int main()
 	while (window.isOpen())
 	{
 		sf::Event event;
+		sf::Event Event2;
 		while (window.pollEvent(event))
 		{
+			window2.pollEvent(Event2);
+			if (Event2.type == sf::Event::Closed) //WHY DOESN'T THIS WORK!?
+			{
+				window2.close();
+			}
 			if (event.type == sf::Event::Closed)
+			{
 				window.close();
+			}
 			if (event.type == sf::Event::TextEntered)
 			{
 				if (event.text.unicode < 128) {
 					char c = static_cast<char>(event.text.unicode);
 					cout << "ASCII character typed: " << c << endl;
 					switch (c) {
-					case 's':
+					case 's': //START
 						cout << (!carList.getAnimStat() ? "\nStarting" : "\nStopping") << " simulation..." << endl;
 						carList.setAnimStat(!carList.getAnimStat());
-
 						break;
-					case 'p':
-						cout << "\nThis feature is disabled as processing is continuous..." << endl;
+					case 'p': //alternate pausing mechanism
+						cout << "Pausing... Press 's' to continue.";
+						while (static_cast<char>(event.text.unicode)!='s')
+						{
+							window.pollEvent(event);
+							sleep(seconds(0.01));
+						}
+						cout << "Unpausing";
 						carList.processCommands();
 						break;
-					case '0':
+					case 'q': //QUIT
+						window.close();
+						break;
+/*					case '0':
 						cout << "\nSTOP command for ID 0 was " << (carList.setCommand(0, Car::CommandType::Stop) ? "set." : "not set.") << endl;
 						break;
 					case '1':
@@ -57,10 +74,9 @@ int main()
 						break;
 					case '2':
 						cout << "\nREADY command for ID 0 was " << (carList.setCommand(0, Car::CommandType::Ready) ? "set." : "not set.") << endl;
-						break;
+						break;*/
 					}
 				}
-
 			}
 		}
 

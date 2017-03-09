@@ -1,6 +1,6 @@
 //Only definitions
 
-#define ABOUT "ITCS Simulation v0.10"
+#define ABOUT "Mesh Network Traffic Controller v0.10"
 #define WINDOW_HEIGHT 480
 #define WINDOW_WIDTH 640
 #define CAR_SIZE 20.f			//Radius of car

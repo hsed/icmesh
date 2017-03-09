@@ -31,17 +31,18 @@ public:
 		sf::CircleShape::setPosition(x, y);
 		updateDistFromJunc();
 	}
+
 	void setPosition(Vector2f position) {
 		sf::CircleShape::setPosition(position);
 		updateDistFromJunc();
 	}
-
 
 	struct DataPacket {
 		int carID;
 		Lane::LaneType laneID;
 		Lane::LaneType intendedLaneID;
 		float speed; //direction is implied by other properties so this is Speed in X or Y
+//		float direction; //Direction is included for when we implement this in hardware. As we need to use the raw direction to calculate these "other properties"
 		float relDist; //relative distance from intersection == dist from centre of window (assume google maps)
 		float prevTime; //temp fix for issue with bouding boxes and intersection
 		bool atJunc; //is the car currently crossing the junction
@@ -51,6 +52,7 @@ public:
 		Entity::update(); //important
 		updateDistFromJunc();
 	}
+
 	void setVelocity(sf::Vector2f velocity) {
 		Entity::setVelocity(velocity); //important
 		this->currentState.speed = ((velocity.x == 0) ? velocity.y: velocity.x); //spped has no direction so need to set x or y or either if both zero
@@ -71,14 +73,15 @@ public:
 		this->currentState.relDist = getDistFromJunc();
 	}
 
-
 #pragma region Commands
 	enum CommandType {
 		Stop,	//Hazard
 		Slow,	//Caution
 		Ready
 	};
+
 	CommandType getCommand() { return command; }
+
 	CommandType setCommand(CommandType command) { 
 		if (command == CommandType::Stop && this->currentCommand != CommandType::Stop) {
 			this->stop();
@@ -92,6 +95,7 @@ public:
 		return this->command = command; 
 	}
 	//Keep this function for now
+
 	void recieveCommands(std::vector<Car::CommandType> cmds) {
 		//cannt use std as namespace atm, using sf?
 		int cmdScore = 1; //default score
@@ -128,19 +132,23 @@ public:
 	Color getColor() { return this->getFillColor(); }
 
 	void setID(int ID) { currentState.carID = ID; }
+
 	int getID() { return currentState.carID; }
+
 	void setLaneID(Lane::LaneType ID) { currentState.laneID = ID; }
+
 	void setIntLaneID(Lane::LaneType ID) { currentState.intendedLaneID = ID; }
+
 	void cross() {
 		this->currentState.laneID = this->currentState.intendedLaneID;
 	}
+
 	void setPrevTime(float time) {
 		this->currentState.prevTime = time;
 	}
 	//Get LaneID from datapacket
 
 	DataPacket getPacket() { return this->currentState; }
-	
 
 private:
 	DataPacket currentState;
@@ -207,4 +215,6 @@ private:
 		this->velocity = this->initVelocity;
 		this->currentCommand = CommandType::Ready;
 	}
+
+
 };

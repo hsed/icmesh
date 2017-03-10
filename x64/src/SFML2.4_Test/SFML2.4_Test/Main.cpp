@@ -14,14 +14,12 @@ void drawShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carLi
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), ABOUT, sf::Style::None); //Main window
-	sf::RenderWindow window2(sf::VideoMode(400, 400), "Information Window"); //Info Window
-	//sf::RectangleShape trackVert;
-	//sf::RectangleShape trackHorz;
-	Lane junction; //not really a lane but have similar properties
-
-	vector<Lane> laneList;
-	CarList carList; //a linked list with objects for each node of type Car.
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), ABOUT); //Main window
+	//sf::RenderWindow window2(sf::VideoMode(400, 400), "Information Window"); //Info Window, use it if we need it
+	
+	Lane junction;				//not really a lane but have similar properties aka an intersection is of rectangular type.
+	vector<Lane> laneList;		//a vector with objects of type "Lane".
+	CarList carList;			//a class with an underlying linked-list with objects of type "Car", similar to vector but better memory management.
 	bool isStarted = false;
 
 	cout << ABOUT << endl  << endl;
@@ -31,14 +29,14 @@ int main()
 	while (window.isOpen())
 	{
 		sf::Event event;
-		sf::Event Event2;
+		//sf::Event Event2;
 		while (window.pollEvent(event))
 		{
-			window2.pollEvent(Event2);
+			/*window2.pollEvent(Event2);//this is not enough you need to loop through
 			if (Event2.type == sf::Event::Closed) //WHY DOESN'T THIS WORK!?
 			{
 				window2.close();
-			}
+			}*/
 			if (event.type == sf::Event::Closed)
 			{
 				window.close();
@@ -47,20 +45,13 @@ int main()
 			{
 				if (event.text.unicode < 128) {
 					char c = static_cast<char>(event.text.unicode);
-					cout << "ASCII character typed: " << c << endl;
+					//cout << "ASCII character typed: " << c << endl;
 					switch (c) {
 					case 's': //START
 						cout << (!carList.getAnimStat() ? "\nStarting" : "\nStopping") << " simulation..." << endl;
 						carList.setAnimStat(!carList.getAnimStat());
 						break;
-					case 'p': //alternate pausing mechanism
-						cout << "Pausing... Press 's' to continue.";
-						while (static_cast<char>(event.text.unicode)!='s')
-						{
-							window.pollEvent(event);
-							sleep(seconds(0.01));
-						}
-						cout << "Unpausing";
+					case 'p': //PROCESS CMDS Manually
 						carList.processCommands();
 						break;
 					case 'q': //QUIT
@@ -75,12 +66,22 @@ int main()
 					case '2':
 						cout << "\nREADY command for ID 0 was " << (carList.setCommand(0, Car::CommandType::Ready) ? "set." : "not set.") << endl;
 						break;*/
+					case 'f':
+						//alternate pausing mechanism
+						cout << "FREEZING ... Press 's' to continue.";
+						while (static_cast<char>(event.text.unicode) != 's')
+						{
+							window.pollEvent(event);
+							sleep(seconds(0.01));
+						}
+						cout << "Unfreezing";
+						break;
 					}
 				}
 			}
 		}
 
-		if (carList.getAnimStat()) { carList.processCommands(); }//process commands continuously--disabled for testing
+		if (carList.getAnimStat()) { carList.processCommands(); }//process commands continuously--disable for testing
 		carList.checkJunction(junction);
 		carList.checkPositions(window);
 		drawShapes(window, laneList, carList, junction);
@@ -110,11 +111,11 @@ void initShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carLi
 
 
 	//Init Cars
-	carList.addItem(Lane::LaneNI,Lane::LaneSO,sf::Color::Red, Vector2f(((float)window.getSize().x + TRACK_WIDTH) / 2, 0 + CAR_SIZE), Vector2f(0, 0.4f));
+	carList.addItem(Lane::LaneNI,Lane::LaneSO,sf::Color::Red, Vector2f(((float)window.getSize().x + TRACK_WIDTH) / 2, 0 + 150), Vector2f(0, 0.4f));
 	carList.addItem(Lane::LaneWI, Lane::LaneEO, sf::Color::Blue, Vector2f(20 + CAR_SIZE, ((float)window.getSize().y - TRACK_WIDTH) / 2), Vector2f(1.f, 0));
 	carList.addItem(Lane::LaneEI, Lane::LaneWO, sf::Color::Green, Vector2f(((float)window.getSize().x + TRACK_WIDTH) / 2 + 100, ((float)window.getSize().y + TRACK_WIDTH) / 2), Vector2f(-0.5f, 0));
 
-	//Initi Junction
+	//Initi Junction // bad programming
 	junction = Lane(Lane::Undefined, Vector2f(TRACK_WIDTH*2, TRACK_WIDTH*2), Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), Color::Yellow);
 	junction.setOrigin(Vector2f(junction.getSize().x / 2, junction.getSize().y / 2));
 }

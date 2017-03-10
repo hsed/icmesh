@@ -1,5 +1,5 @@
 //Only definitions
-
+#define DEBUG 0
 #define ABOUT "Mesh Network Traffic Controller v0.10"
 #define WINDOW_HEIGHT 480
 #define WINDOW_WIDTH 640

@@ -45,7 +45,7 @@ public:
 
 	//MAIN PROCESSING MODULE
 	void processCommands() {
-		cout << endl << endl;
+		if (DEBUG) cout << endl << endl;
 		//vector<Car::DataPacket> packets = new vector<Car::DataPacket>[LANES]; 
 		vector<vector<Car::DataPacket>> packetsPerLane;
 		vector<Car::DataPacket> tmpLanePackets, allPackets;

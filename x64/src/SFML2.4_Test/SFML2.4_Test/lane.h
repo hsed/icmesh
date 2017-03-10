@@ -54,13 +54,12 @@ public:
 
 	static bool canCrash(Lane::LaneType ID1Cur, Lane::LaneType ID2Cur, Lane::LaneType ID1Fut, Lane::LaneType ID2Fut) {
 		if (ID1Fut == ID2Fut) {
-			return true;	//Same intended lane
+			return true;	//Same intended lane, so can definitely crash
 		}
-		else if ((ID1Cur == 7 && ID2Cur == 1) || (ID1Cur == 1 && ID2Cur == 7)) {
-			return true; //special case
-		}
-		else if ((ID1Cur == 3 && ID2Cur == 5) || (ID1Cur == 5 && ID2Cur == 3)) {
-			return true; //special case
+		else if ((ID1Cur % 2 == 1) && (ID2Cur % 2 == 1) && (abs(ID2Cur - ID1Cur) == 2 || abs(ID2Cur - ID1Cur) == 6)) {
+			//both cars originate from odd lanes (inward) and the lane difference is 2 OR 6 so 7-1,1-7,3-5,5-3,5-7,7-5,1-3,3-1
+			if (DEBUG) std::cout << "CAN CRASH ODD & 2 DIFF" << std::endl;
+			return true;
 		}
 		else {
 			return false; //default case
@@ -74,6 +73,8 @@ public:
 		Right = 1,
 		UndefinedDirection = -1
 	};
+
+	static bool compLaneTime(LaneTime i, LaneTime j) { return (i.time < j.time); }
 
 private:
 	LaneType laneID;

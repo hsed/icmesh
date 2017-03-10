@@ -22,7 +22,7 @@ public:
 		command = CommandType::Ready;
 		currentCommand = CommandType::Ready;
 
-		currentState = {-1, Lane::Undefined, Lane::Undefined, -1, getDistFromJunc(), -1, false}; //need to implement speed and position from intersection
+		currentState = { -1, Lane::Undefined, Lane::Undefined, -1, getDistFromJunc(), -1, false }; //need to implement speed and position from intersection
 
 	}
 
@@ -55,7 +55,7 @@ public:
 
 	void setVelocity(sf::Vector2f velocity) {
 		Entity::setVelocity(velocity); //important
-		this->currentState.speed = ((velocity.x == 0) ? velocity.y: velocity.x); //spped has no direction so need to set x or y or either if both zero
+		this->currentState.speed = ((velocity.x == 0) ? velocity.y : velocity.x); //spped has no direction so need to set x or y or either if both zero
 	}
 
 	bool checkCollision(sf::Shape* entity) {
@@ -82,7 +82,7 @@ public:
 
 	CommandType getCommand() { return command; }
 
-	CommandType setCommand(CommandType command) { 
+	CommandType setCommand(CommandType command) {
 		if (command == CommandType::Stop && this->currentCommand != CommandType::Stop) {
 			this->stop();
 		}
@@ -92,7 +92,7 @@ public:
 		if (command == CommandType::Ready && this->currentCommand != CommandType::Ready) {
 			this->restart();
 		}
-		return this->command = command; 
+		return this->command = command;
 	}
 	//Keep this function for now
 
@@ -128,8 +128,10 @@ public:
 		*/
 	}
 
-	void recievePackets(vector<Car::DataPacket> allPackets) {
-		vector<vector<Car::DataPacket>> packetsPerLane;
+	void recievePackets(std::vector<Car::DataPacket> allPackets) {
+		using namespace std;
+
+		vector<std::vector<Car::DataPacket>> packetsPerLane;
 		vector<Car::DataPacket> tmpLanePackets;
 
 		for (int i = 0; i < LANES; i++) { packetsPerLane.push_back(tmpLanePackets); }
@@ -138,18 +140,18 @@ public:
 				packetsPerLane[allPackets[i].laneID].push_back(allPackets[i]);
 			}
 			else {
-				cout << "ERROR: Cannot get packet from car with id " << allPackets[i].laneID << "as laneID is invalid." << endl;
+				std::cout << "ERROR: Cannot get packet from car with id " << allPackets[i].laneID << "as laneID is invalid." << std::endl;
 			}
 		}
 
-		
+
 
 		//Least time to cross => crosses first algorithm.
 
 
 		Lane::LaneTime temp;
 		//TimeID temp;
-		vector<Lane::LaneTime> leastTimesToEnter;
+		std::vector<Lane::LaneTime> leastTimesToEnter;
 
 
 
@@ -166,9 +168,9 @@ public:
 
 
 		if (!leastTimesToEnter.empty()) {
-			std::sort(leastTimesToEnter.begin(), leastTimesToEnter.end(), CarList::compTimeID);
+			sort(leastTimesToEnter.begin(), leastTimesToEnter.end(), Lane::compLaneTime);
 			for (int i = 0; i < leastTimesToEnter.size(); i++) {
-				cout << "Nearest car in lane: " << Lane::laneString(leastTimesToEnter[i].laneID) << " will take: " << leastTimesToEnter[i].time << "s to enter junction." << endl;
+				if (DEBUG) cout << "\nNearest car in lane: " << Lane::laneString(leastTimesToEnter[i].laneID) << " will take: " << leastTimesToEnter[i].time << "s to enter junction." << endl;
 			}
 		}
 
@@ -179,44 +181,45 @@ public:
 				//inside to minus from junc width
 				float relDist = abs(allPackets[i].relDist);
 				float timeToCross = abs((((TRACK_WIDTH * 2) + CAR_SIZE * 2) - relDist) / allPackets[i].speed) * PERIOD_S;
-				cout << "Car in junction will take: " << timeToCross << "s to cross" << endl;
+				if (DEBUG) cout << "Car in junction" << " with ID: " << allPackets[i].carID << " will take: " << timeToCross << "s to cross" << endl;
 				skipRest = false;
 				//if (timeToCross < allPackets[i].prevTime || allPackets[i].prevTime == -1) { //this has been fixed by adding virtual padding to junction
-				if (true) {
 					//only test if time is NOT increasing
-					cout << "still on prev: " << allPackets[i].prevTime << " now: " << timeToCross << endl;
+					//cout << "still on prev: " << allPackets[i].prevTime << " now: " << timeToCross << endl;
 					//allPackets[i].prevTime = timeToCross;
 					//getCarByID(allPackets[i].carID)->setPrevTime(timeToCross);
 
-					for (int j = 0; j < leastTimesToEnter.size() && !skipRest; j++) {
-						if (leastTimesToEnter[j].time >(timeToCross + 0.5)) {
-							skipRest = true; //after the first value > timetocross all other must be > cause sorted, give +0.5sec buffer
-						}
-						else {
-							cout << "time maybe an issue" << endl;
-							//same or less to enter as it is to cross
+				for (int j = 0; j < leastTimesToEnter.size() && !skipRest; j++) {
+					if (leastTimesToEnter[j].time > (timeToCross + 0.5)) {
+						skipRest = true; //after the first value > timetocross all other must be > cause sorted, give +0.5sec buffer
+					}
+					else {
+						if (DEBUG) cout << "\nTiming may be an issue for car in lane: " << Lane::laneString(leastTimesToEnter[j].laneID) << endl;
+						//same or less to enter as it is to cross
 
-							Lane::LaneType self = allPackets[i].laneID;
-							Lane::LaneType nearby = packetsPerLane[leastTimesToEnter[j].laneID][0].laneID; //get nearest node in that lane, assume topmost
-							Lane::LaneType selfIntent = allPackets[i].intendedLaneID;
-							Lane::LaneType nearbyIntent = packetsPerLane[leastTimesToEnter[j].laneID][0].intendedLaneID; //get nearest node in that lane, assume topmost
+						Lane::LaneType self = allPackets[i].laneID; //original laneid of crosser
+						Lane::LaneType nearby = packetsPerLane[leastTimesToEnter[j].laneID][0].laneID; //get nearest node in that lane, assume topmost
+						Lane::LaneType selfIntent = allPackets[i].intendedLaneID;
+						Lane::LaneType nearbyIntent = packetsPerLane[leastTimesToEnter[j].laneID][0].intendedLaneID; //get nearest node in that lane, assume topmost
 
-							cout << "my id: " << Lane::laneString(selfIntent) << " other id: " << Lane::laneString(nearbyIntent) << endl;
+						if (DEBUG) cout << "My intended lane: " << Lane::laneString(selfIntent) << "; Issue car intended lane: " << Lane::laneString(nearbyIntent) << endl;
 
-							if (Lane::canCrash(self, nearby, selfIntent, nearbyIntent)) {
-								cout << "Crash is viabe slowing down all cars in lane: " << leastTimesToEnter[j].laneID << endl;
-								for (int k = 0; k < packetsPerLane[leastTimesToEnter[j].laneID].size(); k++) {
-									int ID = packetsPerLane[leastTimesToEnter[j].laneID][k].carID;
-									//Car* temp = getCarByID(ID);
-									//if (temp != NULL) {
-										//temp->setCommand(Car::Slow);
-									//}
+						if (Lane::canCrash(self, nearby, selfIntent, nearbyIntent)) {
+							if (DEBUG) cout << "Crash is viabe slowing down all cars in lane: " << leastTimesToEnter[j].laneID << endl;
+							for (int k = 0; k < packetsPerLane[leastTimesToEnter[j].laneID].size(); k++) {
+								int ID = packetsPerLane[leastTimesToEnter[j].laneID][k].carID;
+								if (ID == this->getID() && !this->getPacket().atJunc) {
+									this->setCommand(Car::Stop);	//a very ineff way atm need to make it better aka reduce no of loops
+									//Stop is better for now cause u r guaranteed no crash!
 								}
+								//Car* temp = getCarByID(ID);
+								//if (temp != NULL) {
+									//temp->setCommand(Car::Slow);
+								//}
 							}
 						}
 					}
 				}
-				//isAtJunc = true;
 			}
 		}
 

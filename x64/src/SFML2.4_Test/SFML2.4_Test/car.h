@@ -209,7 +209,14 @@ public:
 							for (int k = 0; k < packetsPerLane[leastTimesToEnter[j].laneID].size(); k++) {
 								int ID = packetsPerLane[leastTimesToEnter[j].laneID][k].carID;
 								if (ID == this->getID() && !this->getPacket().atJunc) {
-									this->setCommand(Car::Stop);	//a very ineff way atm need to make it better aka reduce no of loops
+									if (this->getCommand() == Car::Ready) {
+										this->setCommand(Car::Slow); //needs more testing to see if it actually slows first
+									}
+									else if (this->getCommand() == Car::Slow) {
+										//If slow but still can crash then just stop
+										this->setCommand(Car::Stop);
+									}
+										//a very ineff way atm need to make it better aka reduce no of loops
 									//Stop is better for now cause u r guaranteed no crash!
 								}
 								//Car* temp = getCarByID(ID);

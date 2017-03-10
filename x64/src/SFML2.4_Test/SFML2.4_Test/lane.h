@@ -74,99 +74,99 @@ public:
 		UndefinedDirection = -1
 	};
 
+	friend TurningDirection operator + (const Lane::LaneType & Op1, const Lane::LaneType & Op2) //The spirit of the function - returns turning direction by adding the lanes
+	{
+		int x, y;
+
+		if (Op1 == Lane::LaneType::LaneEI)
+		{
+			x = 10;
+		}
+		else if (Op1 == Lane::LaneType::LaneSI)
+		{
+			x = 20;
+		}
+		else if (Op1 == Lane::LaneType::LaneWI)
+		{
+			x = 30;
+		}
+		else if (Op1 == Lane::LaneType::LaneNI)
+		{
+			x = 40;
+		}
+		else
+		{
+			return Lane::TurningDirection::UndefinedDirection;
+		}
+
+		if (Op2 == Lane::LaneType::LaneEO)
+		{
+			y = 1;
+		}
+		else if (Op2 == Lane::LaneType::LaneSO)
+		{
+			y = 2;
+		}
+		else if (Op2 == Lane::LaneType::LaneWO)
+		{
+			y = 3;
+		}
+		else if (Op2 == Lane::LaneType::LaneNO)
+		{
+			y = 4;
+		}
+		else
+		{
+			return Lane::TurningDirection::UndefinedDirection;
+		}
+
+		int z = x + y;
+
+		switch (z)
+		{
+		case(14):
+			return Lane::TurningDirection::Right;
+			break;
+		case(13):
+			return Lane::TurningDirection::Forward;
+			break;
+		case(12):
+			return Lane::TurningDirection::Left;
+			break;
+		case(21):
+			return Lane::TurningDirection::Right;
+			break;
+		case(24):
+			return Lane::TurningDirection::Forward;
+			break;
+		case(23):
+			return Lane::TurningDirection::Left;
+			break;
+		case(32):
+			return Lane::TurningDirection::Right;
+			break;
+		case(31):
+			return Lane::TurningDirection::Forward;
+			break;
+		case(34):
+			return Lane::TurningDirection::Left;
+			break;
+		case(43):
+			return Lane::TurningDirection::Right;
+			break;
+		case(42):
+			return Lane::TurningDirection::Forward;
+			break;
+		case(41):
+			return Lane::TurningDirection::Left;
+			break;
+		default:
+			return Lane::TurningDirection::UndefinedDirection;
+		}
+	}
+
 	static bool compLaneTime(LaneTime i, LaneTime j) { return (i.time < j.time); }
 
 private:
 	LaneType laneID;
 };
-
-Lane::TurningDirection operator + (const Lane::LaneType & Op1, const Lane::LaneType & Op2) //The spirit of the function - returns turning direction by adding the lanes
-{
-	int x, y;
-
-	if (Op1 == Lane::LaneType::LaneEI)
-	{
-		x = 10;
-	}
-	else if (Op1 == Lane::LaneType::LaneSI)
-	{
-		x = 20;
-	}
-	else if (Op1 == Lane::LaneType::LaneWI)
-	{
-		x = 30;
-	}
-	else if (Op1 == Lane::LaneType::LaneNI)
-	{
-		x = 40;
-	}
-	else
-	{
-		return Lane::TurningDirection::UndefinedDirection;
-	}
-
-	if (Op2 == Lane::LaneType::LaneEO)
-	{
-		y = 1;
-	}
-	else if (Op2 == Lane::LaneType::LaneSO)
-	{
-		y = 2;
-	}
-	else if (Op2 == Lane::LaneType::LaneWO)
-	{
-		y = 3;
-	}
-	else if (Op2 == Lane::LaneType::LaneNO)
-	{
-		y = 4;
-	}
-	else
-	{
-		return Lane::TurningDirection::UndefinedDirection;
-	}
-
-	int z = x + y;
-
-	switch (z)
-	{
-	case(14):
-		return Lane::TurningDirection::Right;
-		break;
-	case(13):
-		return Lane::TurningDirection::Forward;
-		break;
-	case(12):
-		return Lane::TurningDirection::Left;
-		break;
-	case(21):
-		return Lane::TurningDirection::Right;
-		break;
-	case(24):
-		return Lane::TurningDirection::Forward;
-		break;
-	case(23):
-		return Lane::TurningDirection::Left;
-		break;
-	case(32):
-		return Lane::TurningDirection::Right;
-		break;
-	case(31):
-		return Lane::TurningDirection::Forward;
-		break;
-	case(34):
-		return Lane::TurningDirection::Left;
-		break;
-	case(43):
-		return Lane::TurningDirection::Right;
-		break;
-	case(42):
-		return Lane::TurningDirection::Forward;
-		break;
-	case(41):
-		return Lane::TurningDirection::Left;
-		break;
-	default:
-		return Lane::TurningDirection::UndefinedDirection;
-	}
-}

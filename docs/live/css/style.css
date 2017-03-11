@@ -1787,7 +1787,8 @@ figure.effect-apollo:hover figcaption::before {
 /*-- //Portfolio --*/
 
 canvas {
-	position: fixed;
+	position: absolute; /*fixed;*/
+  overflow-x: hidden;
 	z-index: -1;
 	top: 0;
 	left: 0;

@@ -1,8 +1,8 @@
-var canvasDots = function( canvas, height ) {
-      ctx = canvas.getContext('2d'),
-      colorDot = 'rgba(255,255,255,0.75)',
-      color = 'rgba(255,255,255,0.5)';
-  canvas.width = window.innerWidth;
+var canvasDots = function( canvas, height, width ) {
+  ctx = canvas.getContext('2d'),
+  colorDot = 'rgba(255,255,255,0.75)',
+  color = 'rgba(255,255,255,0.5)';
+  canvas.width = width; //some random issue with viewport fix by giving a smaller value
   canvas.height = height;
   canvas.style.display = 'block';
   ctx.fillStyle = colorDot;
@@ -15,7 +15,7 @@ var canvasDots = function( canvas, height ) {
   };
 
   var dots = {
-    nb: 350,
+    nb: ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? 50 : 350,  //350, but make less for mobile
     distance: 60,
     d_radius: 100,
     array: []
@@ -97,5 +97,12 @@ var canvasDots = function( canvas, height ) {
   mousePosition.x = window.innerWidth / 2;
   mousePosition.y = window.innerHeight / 2;
 
-  setInterval(createDots, 1000/30); 
+  timer = setInterval(createDots, 1000/30); 
+
+  this.destroy = function (refName) {
+         clearInterval(timer);
+         ctx.clearRect(0, 0, canvas.width, canvas.height);
+         eval(refName + " = null;");
+         eval("delete " + refName + ";");
+     };
 };

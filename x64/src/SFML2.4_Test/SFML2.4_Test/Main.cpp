@@ -32,7 +32,7 @@ int main()
 		//sf::Event Event2;
 		while (window.pollEvent(event))
 		{
-			/*window2.pollEvent(Event2);//this is not enough you need to loop through
+			/*window2.pollEvent(Event2);//this is not enough you need to loop through >>> (What does this mean?)
 			if (Event2.type == sf::Event::Closed) //WHY DOESN'T THIS WORK!?
 			{
 				window2.close();

@@ -5,6 +5,7 @@
 #include "lane.h"
 #include <vector>
 #include <algorithm>
+#include "linkedList.h"
 
 using namespace sf;
 
@@ -22,9 +23,45 @@ public:
 		command = CommandType::Ready;
 		currentCommand = CommandType::Ready;
 
-		currentState = { -1, Lane::Undefined, Lane::Undefined, -1, getDistFromJunc(), -1, false }; //need to implement speed and position from intersection
+		currentState = { -1, Lane::Undefined, Lane::Undefined, -1, 0, getDistFromJunc(), -1, false }; //need to implement speed and position from intersection
 
 	}
+
+	int setPriority(vector<Car> currentCars, bool frontOfLane, int noOfTimesWaited, vector<Lane::LaneType> lanesOccupied) //returns an int for compatibility with mbed (for scalable sizing)
+	{
+		//CALCULATIONS TO SEE WHETHER FRONT OF LANE OR NOT
+		if(frontOfLane)
+		{
+			return 0;
+		}
+		
+		int priority = 1;
+		priority = priority + currentState.speed; //May need scaling
+		priority = priority + currentCars.size();
+		priority = priority + (noOfTimesWaited)*(noOfTimesWaited); //Grows at a faster rate than the previous function
+		priority = priority * (currentState.laneID + currentState.intendedLaneID); //Intended lane direction
+		//BELOW IMPLEMENT TRUTH TABLE TO FIND OUT IF THE CAR IS COMPATIBLE WITH ANY OTHER FRONT CAR. IF SO DOUBLE ITS PRIORITY
+		if (currentState.laneID ==	Lane::LaneType::LaneEI)
+		{
+
+		}
+		else if (currentState.laneID == Lane::LaneType::LaneSI)
+		{
+
+		}
+		else if (currentState.laneID == Lane::LaneType::LaneWI)
+		{
+
+		}
+		else if (currentState.laneID == Lane::LaneType::LaneNI)
+		{
+
+		}
+		return priority;
+	} //Note that the carList must be updated to use the priority to set the speeds etc. of the front cars. The speeds of cars behind the front car must
+	//be calculated automatically, or an algorithm must be implemented to calculate their speeds according to number of cars in the lane vs other lanes
+	//(i.e. assumption is that the car will go in the order of its priority - in this case probably need to calculate separate priority for the cars behind
+	//the front car in each lane).
 
 	//Overloaded func to also update dist when pos is set
 	void setPosition(float x, float y) {
@@ -42,6 +79,7 @@ public:
 		Lane::LaneType laneID;
 		Lane::LaneType intendedLaneID;
 		float speed; //direction is implied by other properties so this is Speed in X or Y
+		int priority;
 //		float direction; //Direction is included for when we implement this in hardware. As we need to use the raw direction to calculate these "other properties"
 		float relDist; //relative distance from intersection == dist from centre of window (assume google maps)
 		float prevTime; //temp fix for issue with bouding boxes and intersection

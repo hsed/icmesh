@@ -4,7 +4,7 @@
 
 
 class CarList : public LinkedList<Car> {
-	//This class inherits LinkedList
+	//This class inherits from LinkedList
 public:
 	CarList() {
 		isStarted = false;
@@ -68,6 +68,7 @@ public:
 #pragma endregion
 
 		//TODO: Do Stuff here @sdpenquin @mohika
+
 		//Gather all packets -> TX
 		for (listPtr tempPtr = mainList; tempPtr != NULL; tempPtr = tempPtr->next) {
 			allPackets.push_back(tempPtr->val.getPacket()); //needed later
@@ -169,9 +170,4 @@ private:
 			drawList(windowHandle, l->next);
 		}
 	}
-
-	
-
-
-
 };

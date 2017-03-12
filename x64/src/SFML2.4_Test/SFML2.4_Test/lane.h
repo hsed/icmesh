@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
+#include <iostream>
+#include "constants.h"
 using namespace sf;
 
 //int operator + (const Lane::LaneType & Op1, const Lane::LaneType & Op2);
@@ -19,16 +20,21 @@ public:
 		LaneWI = 7
 	};
 
+	sf::Clock LastGeneratatedTime;
+
+
 	Lane() {
 		//default, needed for lane
 		this->laneID = Undefined;
 	}
 
-	Lane(LaneType ID, Vector2f size, Vector2f position, Color color = sf::Color::White) {
+	Lane(LaneType ID, Vector2f size, Vector2f position,float rotation, Color color = sf::Color::White) {
 		this->laneID = ID;
 		this->setSize(size);
 		this->setPosition(position);
 		this->setFillColor(color);
+		this->setRotation(rotation);
+		
 	}
 	~Lane(){}
 
@@ -39,6 +45,46 @@ public:
 		LaneType laneID;
 		float time;
 	};
+
+
+	float getMilliSecondsTillRegenerateCar() {
+		float carWidth = CAR_SIZE;
+		float speed = TYPICALSPEED;
+
+		float mseconds = ((carWidth / speed) + 3)*30;
+		sf::Time t = LastGeneratatedTime.getElapsedTime();
+		float remaining = mseconds - t.asMilliseconds();
+		return remaining > 0 ? remaining : 0;
+
+
+	}
+
+	static Vector2f getLaneSpeed(Lane::LaneType laneType) {
+		float speed = TYPICALSPEED;
+		switch (laneType) {
+		case LaneType::LaneNO:
+					return Vector2f(0, -speed);
+				case LaneNI:
+					return Vector2f(0, speed);
+					break;
+				case LaneEO:
+					return Vector2f(speed, 0);
+				case LaneEI:
+					return Vector2f(-speed,0);
+				case LaneSO:
+					return Vector2f(0, speed);
+				case LaneSI:
+					return Vector2f(0, -speed);
+				case LaneWO:
+					return Vector2f(-speed, 0);
+				case LaneWI:
+					return Vector2f(speed,0);
+		};
+
+		
+
+
+	}
 
 	static std::string laneString(Lane::LaneType ID) {
 		switch (ID) {
@@ -66,10 +112,11 @@ public:
 			return false; //default case
 		}
 	}
-
+	
 	enum TurningDirection
 	{
-		Left = 3,
+		//Do NOt Change integers!
+		Left = 0,
 		Forward = 2,
 		Right = 1,
 		UndefinedDirection = -1

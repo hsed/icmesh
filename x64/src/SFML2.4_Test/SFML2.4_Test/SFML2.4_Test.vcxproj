@@ -74,8 +74,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files\SFML\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\SFML\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\SFML\include;$(IncludePath);C:\Users\Piers\Downloads\SFML-2.4.2-windows-vc14-64-bit\SFML-2.4.2\include</IncludePath>
+    <LibraryPath>C:\Program Files\SFML\lib;$(LibraryPath);C:\Users\Piers\Downloads\SFML-2.4.2-windows-vc14-64-bit\SFML-2.4.2\lib</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,7 +154,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="car.cpp" />
     <ClCompile Include="constants.h" />
+    <ClCompile Include="lane.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>

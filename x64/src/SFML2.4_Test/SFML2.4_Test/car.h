@@ -7,24 +7,12 @@
 #include <algorithm>
 
 using namespace sf;
+using namespace std;
 
 class Car : public Entity {
 
 public:
-	Car(sf::Color color = sf::Color::Red, float radius = CAR_SIZE, size_t sides = CAR_SIDES, sf::Vector2f position = sf::Vector2f(0, 0), bool centeredOrigin = true) {
-		//Default Constructor as all arguments are optional
-		this->setFillColor(color);
-		this->setRadius(radius);
-		this->setPointCount(sides);
-		if (centeredOrigin) { this->setOrigin(this->getRadius(), this->getRadius()); } //adjust origin before setting position
-		this->setPosition(position);
-
-		command = CommandType::Ready;
-		currentCommand = CommandType::Ready;
-
-		currentState = { -1, Lane::Undefined, Lane::Undefined, -1, getDistFromJunc(), -1, false }; //need to implement speed and position from intersection
-
-	}
+	Car(sf::Color color = sf::Color::Red, float radius = CAR_SIZE, size_t sides = CAR_SIDES, sf::Vector2f position = sf::Vector2f(0, 0), bool centeredOrigin = true);
 
 	//Overloaded func to also update dist when pos is set
 	void setPosition(float x, float y) {
@@ -51,12 +39,96 @@ public:
 	void update() {
 		Entity::update(); //important
 		updateDistFromJunc();
+
+		if (distFromJunction < 0&&hasTurned==false) 
+			switch (turningDirection){
+			{
+			case Lane::TurningDirection::Left:
+			{
+				float absoluteJunctionSize = JUNCTIONSIZE*WINDOW_HEIGHT;
+				if (distFromJunction > -((absoluteJunctionSize / 4) + (absoluteJunctionSize / 8)) && distFromJunction < -((absoluteJunctionSize / 4) - (absoluteJunctionSize / 8))) {
+					hasTurned = true;
+					Vector2f newVelocity = Lane::getLaneSpeed(this->currentState.intendedLaneID);
+					this->currentState.laneID = this->currentState.intendedLaneID;
+					this->setVelocity(newVelocity);
+				}
+				break;
+			}
+			case Lane::TurningDirection::Right:
+				break;
+			case Lane::TurningDirection::Forward:
+				break;
+			default:
+				throw 100;
+			}
+
+
+
+
+
+		}
+		//TODO: This assumes that the window is square.
+		else if ((distFromJunction > WINDOW_WIDTH / 2&&distFromJunction!=INFINITY)||this->queuedForRefresh) {
+			this->ResetCar(*laneList);
+		}
 	}
 
 	void setVelocity(sf::Vector2f velocity) {
 		Entity::setVelocity(velocity); //important
 		this->currentState.speed = ((velocity.x == 0) ? velocity.y : velocity.x); //spped has no direction so need to set x or y or either if both zero
 	}
+
+	void ResetCar(vector<Lane>& laneList, Lane::LaneType startLane=Lane::LaneType::Undefined, Lane::LaneType destLane=Lane::LaneType::Undefined) {
+
+		this->laneList = &laneList;
+
+		startLane = startLane==Lane::LaneType::Undefined?(Lane::LaneType)(((rand() % 4) * 2) + 1):startLane;
+		//Pause Untill Lane is empty
+		while (laneList[startLane].getMilliSecondsTillRegenerateCar() > 0) {
+			this->queuedForRefresh = true;
+			return;
+		}
+
+
+
+		
+		destLane = destLane == Lane::LaneType::Undefined ? (Lane::LaneType)(((rand() % 4) * 2) ) : destLane;
+		//remove potential fro u turn;
+		if ((destLane / 2) == (startLane / 2)) {
+
+			int rand3 = rand() % 3;
+			if (rand3 == startLane / 2) {
+				rand3 += 1;
+				rand3 = rand3 % 3;
+			}
+				destLane = (Lane::LaneType)(rand3*2);
+
+		}
+		int r = (rand() % 51) * 5;
+		int g = (rand() % 51) * 5;
+		int b = (rand() % 51) * 5;
+		this->setFillColor(Color(r, g, b));
+		this->setPosition(laneList[startLane].getPosition());
+		//this->setPosition(500, 500);
+		
+		this->setVelocity(Lane::getLaneSpeed(startLane));
+		this->setLaneID(startLane);
+		this->setIntLaneID(destLane);
+		this->hasTurned = false;
+		this->updateDistFromJunc();
+		turningDirection = calcualteTurnDirection(startLane, destLane);
+
+		this->queuedForRefresh = false;
+
+		laneList[startLane].LastGeneratatedTime.restart();
+		int tb = laneList[startLane].LastGeneratatedTime.getElapsedTime().asMilliseconds();
+	}
+
+	Lane::TurningDirection calcualteTurnDirection(Lane::LaneType start, Lane::LaneType end) {
+		int diff = abs(start - end) % 6;
+		return (Lane::TurningDirection)(diff / 2);
+	}
+
 
 	bool checkCollision(sf::Shape* entity) {
 		bool isIntersect = Entity::checkCollision(entity);
@@ -70,7 +142,8 @@ public:
 	}
 
 	void updateDistFromJunc() {
-		this->currentState.relDist = getDistFromJunc();
+		this->currentState.relDist = calculateDistFromJunc();
+		distFromJunction = calculateDistFromJunc();
 	}
 
 #pragma region Commands
@@ -134,7 +207,11 @@ public:
 		vector<std::vector<Car::DataPacket>> packetsPerLane;
 		vector<Car::DataPacket> tmpLanePackets;
 
-		for (int i = 0; i < LANES; i++) { packetsPerLane.push_back(tmpLanePackets); }
+		for (int i = 0; i < LANES; i++) { 
+			packetsPerLane.push_back(tmpLanePackets); 
+		}
+
+
 		for (int i = 0; i < allPackets.size(); i++) {
 			if (allPackets[i].laneID >= 0 && allPackets[i].laneID < LANES) {
 				packetsPerLane[allPackets[i].laneID].push_back(allPackets[i]);
@@ -242,7 +319,9 @@ public:
 
 	int getID() { return currentState.carID; }
 
-	void setLaneID(Lane::LaneType ID) { currentState.laneID = ID; }
+	void setLaneID(Lane::LaneType ID) { 
+		currentState.laneID = ID;
+	}
 
 	void setIntLaneID(Lane::LaneType ID) { currentState.intendedLaneID = ID; }
 
@@ -259,48 +338,37 @@ public:
 
 private:
 	DataPacket currentState;
-
+	float distFromJunction;
 	CommandType command;		//old
 	CommandType currentCommand; //old
+	bool hasTurned = false;
+	vector<Lane>* laneList;
+	Lane::TurningDirection turningDirection;
+	bool queuedForRefresh = false;
 
-	float getDistFromJunc() {
-		Vector2f juncTL(WINDOW_WIDTH / 2 - TRACK_WIDTH, WINDOW_HEIGHT / 2 - TRACK_WIDTH); // Top-Left Corner of junction
+	float calculateDistFromJunc() {
+		
 		float x = this->getPosition().x;
 		float y = this->getPosition().y;
+		
+		int direction = this->currentState.laneID / 2;
 
-		switch (this->currentState.laneID) {
-		case 0:
-			y += CAR_SIZE;
-			return juncTL.y - y;
-		case 1:
-			y += CAR_SIZE;
-			return juncTL.y - y;
-		case 2:
-			x -= CAR_SIZE;
-			return x - (juncTL.x + 2 * TRACK_WIDTH);
-		case 3:
-			x -= CAR_SIZE;
-			return x - (juncTL.x + 2 * TRACK_WIDTH);
-		case 4:
-			y -= CAR_SIZE;
-			return y - (juncTL.y + 2 * TRACK_WIDTH);
-		case 5:
-			y -= CAR_SIZE;
-			return y - (juncTL.y + 2 * TRACK_WIDTH);
-		case 6:
-			x += CAR_SIZE;
-			return juncTL.x - x;
-		case 7:
-			x += CAR_SIZE;
-			return juncTL.x - x;
+		
+		if (direction == 0 ||direction==2) {
+			return abs((WINDOW_HEIGHT / 2) - y) - ((JUNCTIONSIZE*WINDOW_HEIGHT)/2);
 		}
-
-		////not a very good idea to do pythagoras maybe bounds is better
-		//float x = (WINDOW_WIDTH / 2) - ;
-		//float y = (WINDOW_HEIGHT / 2) - this->getPosition().y;
-		////std::cout << "x: " << x << " y: " << y << " sqrt: " << sqrt(pow(x, 2) + pow(y, 2)) << std::endl; //debugging only
-		//return sqrt(pow(x, 2) + pow(y, 2));
+		else if(direction ==3 ||direction ==1) {
+			return abs((WINDOW_WIDTH / 2) - x) - ((JUNCTIONSIZE*WINDOW_WIDTH) / 2);
+		}
+		else {
+			return INFINITY;
+		}
+		
 	}
+
+	//Gets a random start time based on the time since car last created.
+
+
 
 	//For commands only atm
 	void stop() {

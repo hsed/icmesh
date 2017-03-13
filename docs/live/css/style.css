@@ -1789,7 +1789,7 @@ figure.effect-apollo:hover figcaption::before {
 canvas {
 	position: absolute; /*fixed;*/
   overflow-x: hidden;
-	z-index: 1;
+	z-index: 0;
 	top: 0;
 	left: 0;
 	right: 0;

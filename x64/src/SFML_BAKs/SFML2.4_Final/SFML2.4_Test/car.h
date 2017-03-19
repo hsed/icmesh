@@ -11,7 +11,6 @@ using namespace sf;
 class Car : public Entity {
 
 public:
-	//DEFAULT INITIALISER
 	Car(sf::Color color = sf::Color::Red, float radius = CAR_RADIUS, size_t sides = CAR_SIDES, sf::Vector2f position = sf::Vector2f(0, 0), bool centeredOrigin = true) {
 		//Default Constructor as all arguments are optional
 		this->setFillColor(color);
@@ -19,27 +18,13 @@ public:
 		this->setPointCount(sides);
 		if (centeredOrigin) { this->setOrigin(this->getRadius(), this->getRadius()); } //adjust origin before setting position
 		this->setPosition(position);
-		this->setOutlineColor(Color(255, 255, 255));
-		this->setOutlineThickness(-1);
+
 		command = CommandType::Ready;
 		currentCommand = CommandType::Ready;
 
 		currentState = { -1, Lane::Undefined, Lane::Undefined, -1, getDistFromJunc(), -1, false }; //need to implement speed and position from intersection
-		numberOfTimesWaited = 0;
-	}
 
-	//EACH CAR'S DATA PACKET
-	struct DataPacket {
-		int carID;
-		Lane::LaneType laneID;
-		Lane::LaneType intendedLaneID;
-		int priority; //Priority availiable to other cars
-		float speed;
-		//Wasn't included: float direction; //Direction is included for when we implement this in hardware. As we need to use the raw direction to calculate these "other properties"
-		float relDist; //relative distance from intersection == dist from centre of window (assume google maps)
-		float prevTime; //temp fix for issue with bouding boxes and intersection
-		bool atJunc; //is the car currently crossing the junction
-	};
+	}
 
 	//Overloaded func to also update dist when pos is set
 	void setPosition(float x, float y) {
@@ -51,6 +36,17 @@ public:
 		sf::CircleShape::setPosition(position);
 		updateDistFromJunc();
 	}
+
+	struct DataPacket {
+		int carID;
+		Lane::LaneType laneID;
+		Lane::LaneType intendedLaneID;
+		float speed; //direction is implied by other properties so this is Speed in X or Y
+//		float direction; //Direction is included for when we implement this in hardware. As we need to use the raw direction to calculate these "other properties"
+		float relDist; //relative distance from intersection == dist from centre of window (assume google maps)
+		float prevTime; //temp fix for issue with bouding boxes and intersection
+		bool atJunc; //is the car currently crossing the junction
+	};
 
 	void update() {
 		Entity::update(); //important
@@ -250,7 +246,7 @@ public:
 							if (DEBUG) cout << "Crash is viable slowing down all cars in lane: " << leastTimesToEnter[j].laneID << endl;
 							for (int k = 0; k < packetsPerLane[leastTimesToEnter[j].laneID].size(); k++) {
 								int ID = packetsPerLane[leastTimesToEnter[j].laneID][k].carID;
-								if (ID == this->getID() && !this->getPacket().atJunc) { //If I am this car
+								if (ID == this->getID() && !this->getPacket().atJunc) {
 									if (this->getCommand() == Car::Ready) {
 										this->setCommand(Car::Stop); //needs more testing to see if it actually slows first
 									}
@@ -304,10 +300,6 @@ public:
 	}
 
 private:
-
-	//Internal Variables
-	int numberOfTimesWaited;
-
 	DataPacket currentState;
 
 	CommandType command;		//old

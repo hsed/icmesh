@@ -12,5 +12,6 @@
 #define MIN_JUNC_DIST 75		//Tests show 73~75 is the range when enter/exiting junction but this may also be affected by speed steps etc
 #define MIN_DIST_TO_JUNC 10		//only stop when near junc
 #define MAX_CARS_IN_LANE (int)((WINDOW_HEIGHT/2)/(CAR_RADIUS*4)) //ATLEAST LEAVE 2 CAR GAP, currently equates to 4
-#define MAX_CAR_SPEED 1.f
-#define MIN_CAR_SPEED 0.2f
+#define MAX_CAR_SPEED 1.5f//1.f
+#define MIN_CAR_SPEED 1.f//0.2f
+#define MAX_CARS 10//15 //total no of cars

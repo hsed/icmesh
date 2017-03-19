@@ -73,6 +73,42 @@ public:
 		this->currentState.relDist = getDistFromJunc();
 	}
 
+	int setPriority(vector<Car> currentCars, bool frontOfLane, int noOfTimesWaited, vector<Lane::LaneType> lanesOccupied) //returns an int for compatibility with mbed (for scalable sizing)
+	{
+		//CALCULATIONS TO SEE WHETHER FRONT OF LANE OR NOT
+		if (frontOfLane)
+		{
+			return 0;
+		}
+
+		int priority = 1;
+		priority = priority + currentState.speed; //May need scaling
+		priority = priority + currentCars.size();
+		priority = priority + (noOfTimesWaited)*(noOfTimesWaited); //Grows at a faster rate than the previous function
+		priority = priority * (currentState.laneID + currentState.intendedLaneID); //Intended lane direction
+																				   //BELOW IMPLEMENT TRUTH TABLE TO FIND OUT IF THE CAR IS COMPATIBLE WITH ANY OTHER FRONT CAR. IF SO DOUBLE ITS PRIORITY
+		if (currentState.laneID == Lane::LaneType::LaneEI)
+		{
+
+		}
+		else if (currentState.laneID == Lane::LaneType::LaneSI)
+		{
+
+		}
+		else if (currentState.laneID == Lane::LaneType::LaneWI)
+		{
+
+		}
+		else if (currentState.laneID == Lane::LaneType::LaneNI)
+		{
+
+		}
+		return priority;
+	} //Note that the carList must be updated to use the priority to set the speeds etc. of the front cars. The speeds of cars behind the front car must
+	  //be calculated automatically, or an algorithm must be implemented to calculate their speeds according to number of cars in the lane vs other lanes
+	  //(i.e. assumption is that the car will go in the order of its priority - in this case probably need to calculate separate priority for the cars behind
+	  //the front car in each lane)
+
 #pragma region Commands
 	enum CommandType {
 		Stop,	//Hazard
@@ -212,12 +248,12 @@ public:
 								int ID = packetsPerLane[leastTimesToEnter[j].laneID][k].carID;
 								if (ID == this->getID() && !this->getPacket().atJunc) {
 									if (this->getCommand() == Car::Ready) {
-										this->setCommand(Car::Slow); //needs more testing to see if it actually slows first
+										this->setCommand(Car::Stop); //needs more testing to see if it actually slows first
 									}
-									else if (this->getCommand() == Car::Slow) {
+									//else if (this->getCommand() == Car::Slow) {
 										//If slow but still can crash then just stop
-										this->setCommand(Car::Stop);
-									}
+										//this->setCommand(Car::Stop);
+									//}
 										//a very ineff way atm need to make it better aka reduce no of loops
 									//Stop is better for now cause u r guaranteed no crash!
 								}

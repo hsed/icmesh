@@ -261,6 +261,19 @@ public:
 		};
 	}
 
+	static float getMaxLaneLength(LaneType laneType) {
+		//returns the maxDist from edge of junction to farthest edge of lane.
+		float maxDist = -(TRACK_WIDTH); //eq is maxwidth = laneLength - trackW + 3* carRadius //laneLength calc later
+		if (laneType == 0 || laneType == 1 || laneType == 4 || laneType == 5) {
+			//vertical tracks
+			maxDist += (WINDOW_HEIGHT / 2);
+		}
+		else {
+			//all others assume horizontal
+			maxDist += (WINDOW_WIDTH / 2);
+		}
+		return maxDist;
+	}
 
 	/* Thread-safe function that returns a random number between min and max (inclusive).
 	This function takes ~142% the time that calling rand() would take. For this extra

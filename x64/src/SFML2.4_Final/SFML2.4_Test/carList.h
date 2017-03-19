@@ -218,17 +218,20 @@ private:
 	}
 	
 	bool carNearEdge(Lane::LaneType l) {
-		float m = -1;
+		float diff;
+		float maxRelDist = -1;
 		for (int i = 0; i < this->size(); i++) {
 			Car* tempPtr = this->at(i);
 			if (tempPtr->getPacket().laneID == l) {
-				if (tempPtr->getPacket().relDist > m) m = tempPtr->getPacket().relDist; //get largest dist
+				if (tempPtr->getPacket().relDist > maxRelDist) maxRelDist = tempPtr->getPacket().relDist; //get largest dist from intersection for all cars in lane
 
 			}
 			
 		}
-		if (m > 400) { return true; }
-		return false;
+		//change code here
+		diff = Lane::getMaxLaneLength(l) - maxRelDist;
+		if (diff >= CAR_RADIUS*2) { return false; } //if there is a car in the first two car spaces in lane then there is a car near edge
+		else { return true; }
 	}
 
 

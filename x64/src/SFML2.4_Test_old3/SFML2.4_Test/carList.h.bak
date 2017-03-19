@@ -1,0 +1,92 @@
+#pragma once
+#include "linkedList.h"
+#include "car.h"
+
+
+
+//new custom functions
+
+/*
+*	Uses tempPtr as variable, traverses through list sequentially (iterator) and returns a pointer to object
+*	Auto-resets when tempPtr is reached.
+*/
+//traverseList() {
+
+//}
+
+class CarList : public LinkedList<Car> {
+	//This class inherits LinkedList
+public:
+	CarList() {
+		traversePtr = NULL; //must initialise to NULL
+		isStarted = false;
+	}
+	~CarList() {
+
+	}
+	/*
+	Car* traverseList() {
+		
+		if (mainList == NULL) {
+			//cout << "case if:" << endl;
+			return NULL;
+		}
+		else if (traversePtr == NULL) {
+			//start from the beginning
+			
+			listPtr tempPtr = mainList;
+			traversePtr = mainList->next;
+			//cout << "case else if:" << tempPtr->val.getColorInt() << endl;
+			return &tempPtr->val;
+		}
+		else {
+			//traverse pointer is somewhere in the middle of the list
+			listPtr tempPtr = traversePtr; //valid
+			traversePtr = traversePtr->next; //point to next element, if NULL then its fine (auto-reset)
+			//cout << "case else:" << tempPtr->val.getColorInt() << endl;
+			return &tempPtr->val;
+		}
+		
+		for (int i = 0; i < 3; i++) {
+		tempCar = carList.traverseList();
+
+		if (tempCar != NULL) {
+		//
+		if (isStarted) { tempCar->update(); }
+		window.draw(*tempCar);
+		}
+		}
+		*/
+		
+	}
+	bool getAnimStat() {
+		return isStarted;
+	}
+	void setAnimStat(bool start) {
+		isStarted = start;
+	}
+
+
+	void drawList(sf::RenderWindow& windowHandle) {
+		if (mainList != NULL) {
+			listPtr tempPtr = mainList; //point to head first
+			drawList(windowHandle, tempPtr);
+		}
+		
+	}
+
+
+private:
+	listPtr traversePtr;
+	bool isStarted;
+
+	//recursive drawing, overloaded function
+	void drawList(sf::RenderWindow& windowHandle, listPtr l) {
+		if (l != NULL) {
+			//draw
+			if (isStarted) { l->val.update(); }
+			windowHandle.draw(l->val);
+			drawList(windowHandle, l->next);
+		}
+	}
+};

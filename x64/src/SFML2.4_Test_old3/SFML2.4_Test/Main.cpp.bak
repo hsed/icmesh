@@ -1,0 +1,79 @@
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include "entity.h"
+#include "car.h"
+#include "linkedList.h"
+
+using namespace std;
+using namespace sf;
+
+int main()
+{
+	typedef Entity listType; //Assume all list elem are integers
+	linkedList<listType> enList; //instantiate class;
+
+	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML works!");
+	sf::CircleShape shape(20.f);
+	bool isStarted = false;
+
+	Entity* ball1 = new Entity(sf::Color::Blue, 20.f, 30Ui64, Vector2f(0 + 20.f, window.getSize().y / 2), true);
+	Entity* ball2 = new Entity(sf::Color::Green, 20.f, 30Ui64, Vector2f(window.getSize().x / 2, window.getSize().y / 2), true);
+	ball1->setVelocity(Vector2f(1, 0));
+	ball2->setVelocity(Vector2f(0.5, 0));
+
+	enList.addItem(*ball1);
+	enList.addItem(*ball2);
+
+	delete ball1, delete ball2;
+
+	Car* car = new Car();
+	car->setVelocity(Vector2f(0.6, 0));
+
+	while (window.isOpen())
+	{
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+			if (event.type == sf::Event::TextEntered)
+			{
+				if (event.text.unicode < 128) {
+					char c = static_cast<char>(event.text.unicode);
+					//cout << "ASCII character typed: " << c << endl;
+					switch (c) {
+					case 's':
+						cout << "Starting simulation..." << endl;
+						isStarted = true;
+						break;
+					}
+				}
+
+			}
+		}
+
+		if (enList.mainList->val.checkCollision(&enList.mainList->next->val)) {
+			cout << "Collision!!!" << endl; //code works but may not make any sense
+		}
+
+		if (isStarted) {
+			//shape.move(0.5, 0); //Move shape by one unit diagonally
+			//ball1->update();
+			//ball2->update();
+			enList.mainList->val.update();
+			enList.mainList->next->val.update();
+			car->update();
+		}
+
+		window.clear();
+		window.draw(enList.mainList->val);
+		window.draw(enList.mainList->next->val);
+		window.draw(*car);
+
+
+		window.display();
+		sleep(seconds(0.01f)); //XXfps, this is only approx
+	}
+
+	return 0;
+}

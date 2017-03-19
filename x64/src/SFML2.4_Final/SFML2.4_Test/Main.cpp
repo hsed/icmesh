@@ -9,8 +9,8 @@
 using namespace std;
 using namespace sf;
 
-void initShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carList, Lane& junction);
-void drawShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carList, Lane& junction);
+void initShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carList, Lane& junction, Lane& junction2);
+void drawShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carList, Lane& junction, Lane& junction2);
 
 int main()
 {
@@ -18,13 +18,14 @@ int main()
 	//sf::RenderWindow window2(sf::VideoMode(400, 400), "Information Window"); //Info Window, use it if we need it
 	
 	Lane junction;				//not really a lane but have similar properties aka an intersection is of rectangular type.
+	Lane junction2;
 	vector<Lane> laneList;		//a vector with objects of type "Lane".
 	CarList carList(MAX_CARS);			//a class with an underlying linked-list with objects of type "Car", similar to vector but better memory management.
 	bool isStarted = false;
 
 	cout << ABOUT << endl  << endl;
 	
-	initShapes(window, laneList, carList, junction); //define shapes for the window
+	initShapes(window, laneList, carList, junction, junction2); //define shapes for the window
 
 
 	while (window.isOpen())
@@ -85,7 +86,7 @@ int main()
 		if (carList.getAnimStat()) { carList.processCommands(); }//process commands continuously--disable for testing
 		carList.checkJunction(junction);
 		carList.checkPositions(window);
-		drawShapes(window, laneList, carList, junction);
+		drawShapes(window, laneList, carList, junction, junction2);
 
 		sleep(seconds(PERIOD_S)); //XXfps, this is only approx
 	}
@@ -93,7 +94,7 @@ int main()
 	return 0;
 }
 
-void initShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carList, Lane& junction)
+void initShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carList, Lane& junction, Lane& junction2)
 {
 	//Init Tracks
 	//Vertical Tracks
@@ -131,17 +132,21 @@ void initShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carLi
 	//carList.addItem(Lane::LaneSI, Lane::LaneNO, Car::getRandColor(), Vector2f(((float)window.getSize().x - TRACK_WIDTH) / 2, 0 + window.getSize().y /2), Vector2f(0, -0.3f));
 	//carList.addItem(Lane::LaneSI, Lane::LaneNO, Car::getRandColor(), Vector2f(((float)window.getSize().x - TRACK_WIDTH) / 2, 200 + window.getSize().y / 2), Vector2f(0, -0.3f));
 	//Initi Junction // bad programming
+
 	junction = Lane(Lane::Undefined, Vector2f(TRACK_WIDTH*2, TRACK_WIDTH*2), Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), Color::Yellow);
-	junction.setOrigin(Vector2f(junction.getSize().x / 2, junction.getSize().y / 2));
+	junction.setOrigin(Vector2f(junction.getSize().x / 2, junction.getSize().y / 2)); //sets the origin to the centre of the junction
+	junction2 = Lane(Lane::LaneType::Undefined, Vector2f(TRACK_WIDTH * 2, TRACK_WIDTH * 2), Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), Color::Green);
+	junction2.setOrigin(Vector2f(junction2.getSize().x / 2, junction2.getSize().y / 2));
 }
 
-void drawShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carList, Lane& junction) {
+void drawShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carList, Lane& junction, Lane& junction2) {
 	//draw all items on screen;
 	window.clear();
 	for (int i = 0; i < laneList.size(); i++) {
 		window.draw(laneList[i]);
 	}
 	window.draw(junction);
+	//window.draw(junction2);
 
 	//Draw last
 	carList.drawList(window);

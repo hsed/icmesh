@@ -14,4 +14,4 @@
 #define MAX_CARS_IN_LANE (int)((WINDOW_HEIGHT/2)/(CAR_RADIUS*4)) //ATLEAST LEAVE 2 CAR GAP, currently equates to 4
 #define MAX_CAR_SPEED 1.5f//1.f
 #define MIN_CAR_SPEED 1.f//0.2f
-#define MAX_CARS 10//15 //total no of cars
+#define MAX_CARS 16//15 //total no of cars

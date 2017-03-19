@@ -19,14 +19,15 @@ int main()
 	
 	Lane junction;				//not really a lane but have similar properties aka an intersection is of rectangular type.
 	vector<Lane> laneList;		//a vector with objects of type "Lane".
-	CarList carList;			//a class with an underlying linked-list with objects of type "Car", similar to vector but better memory management.
+	CarList carList(10);			//a class with an underlying linked-list with objects of type "Car", similar to vector but better memory management.
 	bool isStarted = false;
 
 	cout << ABOUT << endl  << endl;
 	
 	initShapes(window, laneList, carList, junction); //define shapes for the window
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 10; i++) {
+		cout << Lane::intRand(1,6) << endl;
 		//Vector2f vec = Lane::getRandInPos((Lane::LaneType)(i * 2 + 1));
 		//cout << "POS: " << vec.x << " " << vec.y << endl;
 	}
@@ -116,9 +117,11 @@ void initShapes(sf::RenderWindow& window, vector<Lane>& laneList, CarList& carLi
 
 
 	//Init Cars
-	carList.addItem(Lane::LaneNI,Lane::LaneSO,sf::Color::Red, Lane::getRandInPos(Lane::LaneNI), Vector2f(0, 0.4f));
-	carList.addItem(Lane::LaneNI, Lane::LaneSO, Car::getRandColor(), Lane::getRandInPos(Lane::LaneNI), Vector2f(0, 0.4f));
-	carList.addItem(Lane::LaneNI, Lane::LaneSO, Car::getRandColor(), Lane::getRandInPos(Lane::LaneNI), Vector2f(0, 0.4f));
+	//carList
+
+	//carList.addItem(Lane::LaneNI,Lane::LaneSO,sf::Color::Red, Lane::getRandInPos(Lane::LaneNI), Vector2f(0, 0.4f));
+	//carList.addItem(Lane::LaneNI, Lane::LaneSO, Car::getRandColor(), Lane::getRandInPos(Lane::LaneNI), Vector2f(0, 0.4f));
+	//carList.addItem(Lane::LaneNI, Lane::LaneSO, Car::getRandColor(), Lane::getRandInPos(Lane::LaneNI), Vector2f(0, 0.4f));
 	
 	//carList.addItem(Lane::LaneEO, Lane::LaneEO, Car::getRandColor(), Vector2f((window.getSize().x / 2) + 300 + CAR_RADIUS, ((float)window.getSize().y - TRACK_WIDTH) / 2), Vector2f(1.f, 0));
 	//carList.addItem(Lane::LaneEO, Lane::LaneEO, Car::getRandColor(), Vector2f((window.getSize().x / 2) + 150 + CAR_RADIUS, ((float)window.getSize().y - TRACK_WIDTH) / 2), Vector2f(1.f, 0));

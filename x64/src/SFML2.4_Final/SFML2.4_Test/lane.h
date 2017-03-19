@@ -1,4 +1,13 @@
 #pragma once
+#if defined (_MSC_VER)  // Visual studio
+#define thread_local __declspec( thread )
+#elif defined (__GCC__) // GCC
+#define thread_local __thread
+#endif
+
+#include <random>
+#include <time.h>
+#include <thread>
 #include <SFML/Graphics.hpp>
 //#include <random>
 
@@ -24,6 +33,7 @@ public:
 		//default, needed for lane
 		this->laneID = Undefined;
 		//srand((unsigned int)time(NULL));
+
 	}
 	Lane(LaneType ID, Vector2f size, Vector2f position, Color color = sf::Color::White) {
 		this->laneID = ID;
@@ -32,7 +42,7 @@ public:
 		this->setFillColor(color);
 		//this->setOrigin(TRACK_WIDTH / 2, 0); //top-centre for all lanes <-- this is buggy for now
 	}
-	~Lane(){}
+	~Lane() {}
 
 	LaneType getLaneID() { return laneID; }
 	//LaneID only set when constructing object.
@@ -182,8 +192,8 @@ public:
 	static Vector2f getRandInPos(LaneType laneType) {
 		//get a random position in any of the inward lanes only.
 		//std::uniform_int_distribution<> dis(1, MAX_CARS_IN_LANE);
-		float multiplier = int((rand() % MAX_CARS_IN_LANE) + 1); //imagine 10 cars, should this be the 1st..2nd.......or..10th car
-		
+		float multiplier = intRand(1, MAX_CARS_IN_LANE);//int((rand() % MAX_CARS_IN_LANE) + 1); //imagine 10 cars, should this be the 1st..2nd.......or..10th car
+
 		float maxDist = -(TRACK_WIDTH + 3 * CAR_RADIUS); //eq is maxwidth = laneLength - trackW + 3* carRadius //laneLength calc later
 		//float safeDist = CAR_RADIUS * 3; //the safe distance interval which has only 1 car present == atleast 1.5 cars
 		float intervalDist;
@@ -192,19 +202,19 @@ public:
 		switch (laneType) {
 		case LaneNI:
 			//Top Edge -> Middle
-			
-			
+
+
 			maxDist += (WINDOW_HEIGHT / 2); //the missing factor in equation
-			intervalDist = maxDist / MAX_CARS_IN_LANE; 
+			intervalDist = maxDist / MAX_CARS_IN_LANE;
 
 			vec = Vector2f((WINDOW_WIDTH + TRACK_WIDTH) / 2, intervalDist * multiplier);
-			if (DEBUG) std::cout << "intDist: " << intervalDist <<  "LANENI: " << vec.x << " " << vec.y << " mult " << multiplier << std::endl;
+			if (DEBUG) std::cout << "intDist: " << intervalDist << "LANENI: " << vec.x << " " << vec.y << " mult " << multiplier << std::endl;
 			return Vector2f((WINDOW_WIDTH + TRACK_WIDTH) / 2, intervalDist * multiplier);
 		case LaneSI:
 			//Bottom Edge -> Middle
 			maxDist += WINDOW_HEIGHT / 2;
 			intervalDist = maxDist / MAX_CARS_IN_LANE;
-			return Vector2f((WINDOW_WIDTH - TRACK_WIDTH) / 2, (WINDOW_HEIGHT/2) + TRACK_WIDTH + intervalDist * multiplier);
+			return Vector2f((WINDOW_WIDTH - TRACK_WIDTH) / 2, (WINDOW_HEIGHT / 2) + TRACK_WIDTH + intervalDist * multiplier);
 			break;
 		case LaneEI:
 			//Right Edge -> Middle
@@ -220,13 +230,56 @@ public:
 			if (DEBUG) std::cout << "Incorrect LaneID for RandPos" << std::endl;
 			return Vector2f(0, 0); //if not inward then set car to infinity.
 		}
-		
-		
-		
+
+
+
 	}
+
+	static Vector2f getRandVel(LaneType laneType) {
+		//from stackoverflow
+		float speed = floatRand(MIN_CAR_SPEED, MAX_CAR_SPEED);
+			
+
+		switch (laneType) {
+		case LaneType::LaneNO:
+			return Vector2f(0, -speed);
+		case LaneNI:
+			return Vector2f(0, speed);
+			break;
+		case LaneEO:
+			return Vector2f(speed, 0);
+		case LaneEI:
+			return Vector2f(-speed, 0);
+		case LaneSO:
+			return Vector2f(0, speed);
+		case LaneSI:
+			return Vector2f(0, -speed);
+		case LaneWO:
+			return Vector2f(-speed, 0);
+		case LaneWI:
+			return Vector2f(speed, 0);
+		};
+	}
+
+
+	/* Thread-safe function that returns a random number between min and max (inclusive).
+	This function takes ~142% the time that calling rand() would take. For this extra
+	cost you get a better uniform distribution and thread-safety. */
+	static int intRand(const int & min, const int & max) {
+		static std::mt19937* generator = NULL;
+		if (!generator) generator = new std::mt19937(clock() + std::hash<std::thread::id>()(std::this_thread::get_id()));
+		std::uniform_int_distribution<> distribution(min, max);
+		return distribution(*generator);
+	}
+
+	static float floatRand(const int & min, const int & max) {
+		static std::mt19937* generator = NULL;
+		if (!generator) generator = new std::mt19937(clock() + std::hash<std::thread::id>()(std::this_thread::get_id()));
+		std::uniform_real_distribution<float> distribution(min, max);
+		return distribution(*generator);
+	}
+
 private:
 	LaneType laneID;
-	//static std::random_device rd;
-	//static std::mt19937 gen(std::random_device());
 
 };

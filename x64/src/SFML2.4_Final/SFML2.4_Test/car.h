@@ -207,7 +207,7 @@ public:
 						if (DEBUG) cout << "My intended lane: " << Lane::laneString(selfIntent) << "; Issue car intended lane: " << Lane::laneString(nearbyIntent) << endl;
 
 						if (Lane::canCrash(self, nearby, selfIntent, nearbyIntent) && (distToJunc < 10)) {
-							if (DEBUG) cout << "Crash is viabe slowing down all cars in lane: " << leastTimesToEnter[j].laneID << endl;
+							if (DEBUG) cout << "Crash is viable slowing down all cars in lane: " << leastTimesToEnter[j].laneID << endl;
 							for (int k = 0; k < packetsPerLane[leastTimesToEnter[j].laneID].size(); k++) {
 								int ID = packetsPerLane[leastTimesToEnter[j].laneID][k].carID;
 								if (ID == this->getID() && !this->getPacket().atJunc) {

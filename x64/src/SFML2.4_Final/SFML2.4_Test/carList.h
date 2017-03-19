@@ -19,6 +19,7 @@ public:
 		initParams();
 		for (int i = 0; i < numCars; i++) {
 			//create new randomcar
+			addItem();
 		}
 	}
 	void addItem() {
@@ -29,6 +30,25 @@ public:
 		Lane::LaneType intendedLaneID = Lane::getRandLane(laneID); //previous lane to ensure no u-turn
 		Color color = Car::getRandColor();
 		Vector2f pos = Lane::getRandInPos(laneID);
+		
+		/*Position initial collision detection*/
+		bool isCollide = true; //assume collision initially
+		Car* tempCar = new Car;
+		while (isCollide) {
+			isCollide = false; //assume false once inside the while loop.
+			tempCar->setPosition(pos);
+			for (int i = 0; i < this->size() && !isCollide; i++) {
+				if (this->at(i)->checkCollision(tempCar)) {
+					//it collides so get another random position.
+					laneID = Lane::getRandLane(); //get another lane as original lane maybe full.
+					intendedLaneID = Lane::getRandLane(laneID);
+					pos = Lane::getRandInPos(laneID);
+					isCollide = true; //this will break for loop but not while loop.
+				}
+			}
+		}
+		delete tempCar; //prevent memory leak.
+
 		Vector2f vel = laneVelocities[laneID]; //assume already initiliased in initPAram;
 		this->addItem(laneID, intendedLaneID, color, pos, vel);
 	}
@@ -191,8 +211,9 @@ private:
 		isStarted = false;
 		carIndex = 0;
 		for (int i = 0; i < LANES; i++) {
-			//laneVelocities.push_back(Vector2f(Lane::getRandVel(i))); //i gives lane_id and Lane then returns a random vel VALID for that lane e.g. +- etc.
-			laneVelocities.push_back(Vector2f(0,0)); //CHANGE THIS!!!
+			laneVelocities.push_back(Vector2f(Lane::getRandVel((Lane::LaneType)(i)))); //i gives lane_id and Lane then returns a random vel VALID for that lane e.g. +- etc.
+			//laneVelocities.push_back(Vector2f(0,0)); //CHANGE THIS!!!
+			cout << "vel: (" << laneVelocities[i].x << ", " << laneVelocities[i].y << ")" << endl;
 		}
 	}
 	

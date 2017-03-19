@@ -73,7 +73,7 @@ public:
 		this->currentState.relDist = getDistFromJunc();
 	}
 
-	int setPriority(vector<Car> currentCars, bool frontOfLane, int noOfTimesWaited, vector<Lane::LaneType> lanesOccupied) //returns an int for compatibility with mbed (for scalable sizing)
+	int setPriority(std::vector<Car> currentCars, bool frontOfLane, int noOfTimesWaited, std::vector<Lane::LaneType> lanesOccupied) //returns an int for compatibility with mbed (for scalable sizing)
 	{
 		//CALCULATIONS TO SEE WHETHER FRONT OF LANE OR NOT
 		if (frontOfLane)
